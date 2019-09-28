@@ -1,0 +1,596 @@
+#!/usr/bin/env php
+<?php
+$uppmlock = [];
+if (file_exists("uppm.locks.json"))
+    $uppmlock = json_decode(file_get_contents("uppm.locks.json"));
+
+$uppmconf = [];
+if (file_exists("uppm.json"))
+    $uppmconf = json_decode(file_get_contents("uppm.json"));
+
+$serverInfo = @json_decode(@file_get_contents("https://raw.githubusercontent.com/interaapps/uppm-packages/master/uppm.json?".rand(00000, 99999), false, stream_context_create([
+    "http" => [
+        "method" => "GET",
+        "header" => "User-Agent: request"
+    ]
+])));
+
+define("UPPMINFO", [
+    "version"=>"1.0",
+    "server"=> (isset($serverInfo->list)) ? $serverInfo->list : false
+]);
+
+?>
+<?php
+/**
+ * - ULOLEPHPPACKAGEMANAGER -
+ * 
+ * Tools
+ * 
+ * @author InteraApps
+ */
+
+ class Tools {
+
+    public static function getStringBetween($string, $start, $end){
+        $string = $string;
+        $ini = @strpos($string, $start);
+        $ini += strlen($start);
+        if ($end=="") {
+          return substr($string, $ini, strlen($string));
+        }
+        $len = strpos($string, $end, $ini) - $ini;
+        return substr($string , ($start == "") ? 0 : $ini , $len);
+    }
+
+    public static function deleteDir($dirPath, $ignore="NON++++++++++++NON+++++++++++++++NON") {
+        if (!is_dir($dirPath))
+            return;
+        
+        $files = scandir($dirPath);
+        foreach ($files as $file) 
+            if ($file != "." && $file != ".." && $file != $ignore) {
+                if (is_dir($dirPath."/".$file)) {
+                    self::deleteDir($dirPath."/".$file);
+                } else {
+                    if (!($dirPath=="./" && $file=="uppm"))
+                        unlink($dirPath."/".$file);
+                }
+            }
+            
+        rmdir($dirPath);
+    }
+
+     public static function statusIndicator($done, $total, $size=30) {
+
+         static $start_time;
+
+         if($done > $total) return;
+
+         if(empty($start_time)) $start_time=time();
+
+         $perc=(double)($done/$total);
+
+         $bar=floor($perc*$size);
+
+         $status_bar="\r┋";
+         $status_bar.=str_repeat(Colors::GREEN."▉".Colors::ENDC, $bar);
+         if($bar<$size){
+             $status_bar.=Colors::YELLOW."░".Colors::ENDC;
+             $status_bar.=str_repeat(Colors::YELLOW."░".Colors::ENDC, $size-$bar);
+         } else {
+             $status_bar .= Colors::GREEN."▉".Colors::ENDC;
+         }
+
+         $status_bar.="┋ ".number_format($perc*100, 0)." %  $done/$total";
+
+
+         echo "$status_bar  ";
+
+         flush();
+
+     }
+
+
+     function copyDir($src, $dst) {
+         $dir = opendir($src);
+         @mkdir($dst);
+
+         while( $file = readdir($dir) ) {
+             if (( $file != '.' ) && ( $file != '..' )) {
+                 if ( is_dir($src . '/' . $file) ) {
+                     self::copyDir($src . '/' . $file, $dst . '/' . $file);
+                 }
+                 else {
+                     copy($src . '/' . $file, $dst . '/' . $file);
+                 }
+             }
+         }
+         closedir($dir);
+     }
+
+ }
+
+ ?>
+<?php
+/**
+ * - ULOLEPHPPACKAGEMANAGER -
+ * 
+ * INIT
+ * 
+ * @author InteraApps
+ */
+
+ class Init {
+
+    public static function initFromCLI() {
+        $prefix = "\nUPPM INIT: ";
+        if (file_exists("uppm.json")) {
+            echo $prefix."uppm.json already initialized! Do you want to reinitialize it? (yes, y)";
+
+        }
+        echo $prefix."Project name (Only lower case, numbers and underscores): ";
+        $name = readline();
+        if (!preg_match('#^[a-z0-9_]+$#', $name) && $name != "") {
+            return Colors::PREFIX_ERROR."Only lower case, numbers and underscores are allowed!\n";
+        }
+
+        echo $prefix."Project version (Numbers and dots): ";
+        $version = readline();
+        if (!preg_match('#^[0-9.]+$#', $version) && $version != "") {
+            return Colors::PREFIX_ERROR."Only numbers and dots!\n";
+        }
+
+        echo $prefix."Description [OPTIONAL]: ";
+        $description = readline();
+
+        echo $prefix."Author [OPTIONAL]: ";
+        $author = readline();
+
+        echo $prefix."Keywords (Split with a komma) [OPTIONAL]: ";
+        $keywords = explode(',', readline());
+
+        self::initProject($name, $version, $description, $author, $keywords);
+        
+    }
+
+    public static function initProject(
+        $name="uppmproject",
+        $version="1.0",
+        $description="",
+        $author= "",
+        $keywords=[]
+    ) {
+        $file = Configs::getNPPMFile();
+        $file->name=$name;
+        $file->version=$version;
+        $file->description=$description;
+        $file->author   =$author;
+        $file->keywords =$keywords;
+        file_put_contents("uppm.json", json_encode($file, JSON_PRETTY_PRINT));
+    }
+
+ }
+ ?>
+<?php
+/**
+ * - ULOLEPHPPACKAGEMANAGER -
+ * 
+ * Colors
+ * Using colors in the CLI!
+ * 
+ * @author InteraApps
+ */
+
+ class Configs {
+    public static function getLockFile() {
+        if (file_exists("uppm.locks.json"))
+            return json_decode(file_get_contents("uppm.locks.json"));
+        
+        file_put_contents("uppm.locks.json",'
+        {
+            "init_scripts": [
+        
+            ],
+            "cli_scripts": {
+        
+            },
+            "packages": {
+                
+            },
+            "directnamespaces": {
+                
+            }
+        }
+        ');
+        return json_decode(file_get_contents("uppm.locks.json"));
+    }
+
+    public static function getNPPMFile() {
+        if (file_exists("uppm.json"))
+            return json_decode(file_get_contents("uppm.json"));
+        
+        file_put_contents("uppm.json",'
+        {
+            "name": "abc",
+            "version": "1.0",
+            "description": "",
+            "author": "",
+            "keywords": [],
+            "modules": {
+                
+            },
+            "namespaces": {
+                
+            }
+        }
+        ');
+        return json_decode(file_get_contents("uppm.json"));
+    }
+ }
+ ?>
+<?php
+/**
+ * - ULOLEPHPPACKAGEMANAGER -
+ * 
+ * Install
+ * 
+ * @author InteraApps
+ */
+
+ class Install {
+
+    private $downloadUrl,
+            $type,
+            $enddir,
+            $webContext,
+            $name,
+            $version;
+
+    public function __construct($name, $version, $output=true) {
+        $this->name    = $name;
+        $this->version = $version;
+        if ($output) if ($output) Tools::statusIndicator(0, 100);
+        if ($version == ":github"){
+            $this->webContext = stream_context_create([
+                "http" => [
+                    "method" => "GET",
+                    "header" => "User-Agent: request"
+                ]
+            ]);
+            $branch = "master";
+            $this->type = "web";
+            if (strpos($name, "+") !== false) {
+                $branch = ("+".Tools::getStringBetween($name, "+", ""));
+                $this->name= str_replace( $branch, "", $name);
+            }
+            $this->downloadUrl = "https://api.github.com/repos/".$this->name."/zipball/".str_replace("+", "", $branch);
+        } elseif($version == ":web") {
+            $this->type = "web";
+            $this->downloadUrl = $name;
+        } elseif(UPPMINFO["server"] !== false) {
+            $list = @json_decode(@file_get_contents((UPPMINFO["server"])));
+            if ($list->{$this->name}->{$this->version} != null) {
+                $this->downloadUrl = $list->{$this->name}->{$this->version};
+            }
+            $this->type = "normal";
+
+        }
+    }
+
+    public function download($output=true) {
+        if ($output) Tools::statusIndicator(5, 100);
+        file_put_contents("UPPMtemp_module.zip", file_get_contents($this->downloadUrl, false, $this->webContext));
+        if (class_exists('ZipArchive')) {
+            $zip = new ZipArchive;
+            if ($output) Tools::statusIndicator(10, 100);
+            $res = $zip->open("UPPMtemp_module.zip");
+            if ($res === true) {
+                if ($output) Tools::statusIndicator(20, 100);
+                Tools::deleteDir("UPPMtempdir");
+                if ($output) Tools::statusIndicator(25, 100);
+                $zip->extractTo("UPPMtempdir");
+                if ($output) Tools::statusIndicator(30, 100);
+                $zip->close();
+
+                $files = scandir('UPPMtempdir');
+                $dirInZip = false;
+
+                $count = (function($files) {
+                    $counter = 0;
+                    foreach ($files as $f)
+                        if ($f != "." && $f != "..")
+                            $counter++;
+                    return $counter;
+                })($files);
+
+                if (file_exists("UPPMtempdir/uppm.json"))
+                    $tempuppmconf = json_decode(file_get_contents("UPPMtempdir/uppm.json"));
+
+                if ($count == 1) {
+                    foreach($files as $file) {
+                        if (is_dir("UPPMtempdir/".$file)) {
+                            if ($file != "." && $file != "..") {
+                                $dirInZip = $file;
+                                if (file_exists("UPPMtempdir/".$file."/uppm.json"))
+                                    $tempuppmconf = json_decode(file_get_contents("UPPMtempdir/".$file."/uppm.json"));
+                            }
+                        }
+                    }
+                }
+
+                if ($output) Tools::statusIndicator(50, 100);
+
+                if (isset($tempuppmconf->directory))
+                    $enddir = $tempuppmconf->directory;
+                elseif (isset($tempuppmconf->name))
+                    $enddir = "modules/".$tempuppmconf->name;
+                if (is_dir($enddir) && $enddir!="./" )
+                    Tools::deleteDir($enddir);
+                
+                if (!is_dir("modules"))
+                    mkdir("modules");
+
+                $copy = false;
+
+                if ($output && (isset($tempuppmconf->directory) ? $tempuppmconf->directory : "") == "./") {
+                    echo "\nThis module will be moved to this directory: ".dirname(__FILE__)." Do you want that? [yes,NO]";
+                    if (strtolower(readline()) != "yes")
+                        die("Cancelt");
+                    $copy = true;
+                    $enddir = dirname(__FILE__);
+                }
+
+                if ($dirInZip !== false) {
+                    if ($copy)
+                        Tools::copyDir("UPPMtempdir/".$dirInZip, $enddir);
+                    else
+                        rename("UPPMtempdir/".$dirInZip, $enddir);
+                } else {
+                    if ($copy)
+                        Tools::copyDir("UPPMtempdir", $enddir);
+                    else
+                        rename("UPPMtempdir", $enddir);
+                }
+
+                if (isset($tempuppmconf->modules)) {
+                    foreach ($tempuppmconf->modules as $name=>$version) {
+                        $resource = new Install($name, $version);
+                        $resource->download();
+                    }
+                }
+
+                if ($output) Tools::statusIndicator(60, 100);
+
+                $lockFile = Configs::getLockFile();
+                if (is_array($lockFile->packages) || $lockFile->packages == null) {
+                    $lockFile->packages = ["TEMPNULL-------"=>"TEMPNULL-------"];
+                }
+                $lockFile->packages->{$this->version} = $this->name;
+                if (isset($tempuppmconf)) {
+
+                    if (isset($tempuppmconf->directnamespaces)) {
+                        if (is_array($tempuppmconf->directnamespaces)) {
+                            $tempuppmconf->directnamespaces = ["TEMPNULL-------"=>"TEMPNULL-------"];
+                        }
+
+                        foreach ($tempuppmconf->directnamespaces as $key => $val)
+                            $lockFile->directnamespaces->{$key} = $val;
+                    }
+                    if (isset($tempuppmconf->cli_scripts)) {
+                        if (is_array($tempuppmconf->cli_scripts)) {
+                            $tempuppmconf->cli_scripts = ["TEMPNULL-------"=>"TEMPNULL-------"];
+                        }
+
+                        foreach ($tempuppmconf->cli_scripts as $key => $val)
+                            $lockFile->cli_scripts->{$key} = $val;
+                    }
+                }
+
+                rmdir("UPPMtempdir");
+                unlink("UPPMtemp_module.zip");
+
+                if ($output) Tools::statusIndicator(80, 100);
+                file_put_contents("uppm.locks.json", json_encode($lockFile, JSON_PRETTY_PRINT));
+                if ($output) Tools::statusIndicator(100, 100);
+                echo "Done\n";
+            }
+        }
+    }
+
+    public static function installNew($name) {
+        if (strpos($name, ":") !== false) {
+            $type = Tools::getStringBetween($name, "", ":");
+            $name = Tools::getStringBetween($name, ":", "");
+            $config = Configs::getNPPMFile();
+            if ($type=="github") {
+                if (is_array($config->modules))
+                    $config->modules = [$name=>":github"];
+                else
+                    $config->modules->{$name} = ":github";
+                file_put_contents("uppm.json", json_encode($config, JSON_PRETTY_PRINT));
+                (new Install($name, ":github"))->download();
+            } elseif ($type=="web") {
+                if (is_array($config->modules))
+                    $config->modules = [$name=>":web"];
+                else
+                    $config->modules->{$name} = ":web";
+                file_put_contents("uppm.json", json_encode($config, JSON_PRETTY_PRINT));
+                (new Install($name, ":web"))->download();
+            }
+        } else {
+            $list = @json_decode(@file_get_contents((UPPMINFO["server"])));
+            
+            if (strpos($name, "@") !== false) {
+                $version = Tools::getStringBetween($name, "@", "");
+                $name = Tools::getStringBetween($name, "", "@");
+            } elseif (isset($list->{$name}->newest)) {
+                $version = $list->{$name}->newest;
+            } else {
+                echo "Version not found!";
+                return "\n";
+            }
+    
+            var_dump($list);
+            if (isset($list->{$name}->{$version})) {
+                $config = Configs::getNPPMFile();
+                if (is_array($config->modules))
+                    $config->modules = [$name=>$version];
+                else
+                    $config->modules->{$name} = $version;
+                
+                file_put_contents("uppm.json", json_encode($config, JSON_PRETTY_PRINT));
+                (new Install($name, $version))->download();
+            } else {
+                echo "Package not found";
+            }
+        }
+    }
+
+ }
+
+ ?>
+<?php
+/**
+ * - ULOLEPHPPACKAGEMANAGER -
+ * 
+ * Colors
+ * Using colors in the CLI!
+ * 
+ * @author InteraApps
+ */
+
+ class Colors {
+     public const HEADER = "\033[95m",
+                  OKBLUE = "\033[94m",
+                  OKGREEN = "\033[92m",
+                  WARNING = "\033[93m",
+                  FAIL = "\033[91m",
+                  ENDC = "\033[0m",
+                  BOLD = "\033[1m",
+                  UNDERLINE = "\033[4m",
+                  RED = "\033[31m",
+                  BLUE = "\033[34m",
+                  YELLOW = "\033[33m",
+                  TURQUIOUS = "\033[36m",
+                  GREEN = "\033[32m",
+                  BLINK = "\033[5m",
+                  BG_RED = "\033[41m",
+                  BG_BLUE = "\033[44m",
+                  BG_GREEN = "\033[42m",
+                  BG_YELLOW = "\033[43m",
+                  BG_BLACK = "\033[40m";
+        
+    public const PREFIX_DONE = "\033[92m᮰ Done\033[0m: ",
+                 PREFIX_WARN = "\033[93m᮰ WARNING\033[0m: ",
+                 PREFIX_ERROR = "\033[91m᮰ ERROR\033[0m: ";
+ }
+
+ ?>
+<?php
+/**
+ * - ULOLEPHPPACKAGEMANAGER -
+ * 
+ * CLI
+ * 
+ * @author InteraApps
+ */
+
+ class CLI {
+    public $commands;
+    public $descriptions;
+    /**
+     * Change the not found errormessage
+     */
+    public $errorMessage;
+    /** 
+     * Shows a list with all commands on function not found error
+     */
+    public $showArgsOnError=true;
+
+    
+    /**
+     * Register a new command
+     * @param String function-name (Command)
+     * @param Function function (example:function() {return "Hello world";})
+     * @param String (Optional) Description
+     */
+    public function register(string $name, $func, string $description="") {
+        $this->commands[$name] = $func;
+        $this->descriptions[$name] = $description;
+    }
+
+    /**
+     * Runs a command
+     */
+    public function run($run) {
+        if (isset($this->commands[$run])) {
+            $function = ($this->commands[$run]);
+            echo $function($run);
+        } else {
+            if ($this->errorMessage != null) 
+                echo $this->errorMessage;
+            else
+                echo Colors::PREFIX_ERROR."Function \"".$run."\" not found!\n";
+            
+            
+            if ($this->showArgsOnError) {
+                $showArgs = Colors::PREFIX_DONE."Those are some valid functions: ";
+                foreach ($this->commands as $command=>$value) {
+                    $showArgs .= "\n  \033[92m- \033[0m".$command.": ".$this->descriptions[$command];
+                }
+                echo $showArgs."\n";
+            }
+
+        }
+    }
+ }
+
+ ?>
+<?php 
+
+$CLI = new CLI(1);
+
+$CLI->register("-v", function() {
+    return UPPMINFO["version"]."\n";
+}, "See UPPMs version");
+
+$CLI->register("init", function() {
+    return Init::initFromCLI();
+}, "Initializing Project");
+
+$CLI->register("init:fast", function() {
+    return Init::initProject("uppm project", "1.0", "", "Me", []);
+}, "Initializing Project without any information");
+
+$CLI->register("install", function() {
+    global $argv;
+    return Install::installNew($argv[2]);
+}, "Install a new package
+    Types:
+      - 'github:' Downloads a project from github (Example: 'user/project' or 'user/project:master')
+      - 'web:' Downloads a project from web (Example: https://mywebsite.com/test.zip)
+      - 'local:' Unzips a local file 'file.zip'");
+
+$CLI->register("update", function() {
+    global $uppmconf;
+    $lockFile = Configs::getLockFile();
+    $lockFile->packages = ["TEMPNULL-------"=>"TEMPNULL-------"];
+    file_put_contents("uppm.locks.json", json_encode($lockFile, JSON_PRETTY_PRINT));
+    foreach ($uppmconf->modules as $name=>$version) {
+        $resource = new Install($name, $version);
+        $resource->download();
+    }
+}, "Updating all");
+
+
+if (isset($argv[1]))
+    $CLI->run($argv[1], $argv);
+else
+    echo COLORS::PREFIX_ERROR."Command not found\n";
+$lockFile = Configs::getLockFile();
+if (isset($lockFile->packages->{"TEMPNULL-------"})) {
+    unset($lockFile->packages->{"TEMPNULL-------"});
+    file_put_contents("uppm.locks.json", json_encode($lockFile, JSON_PRETTY_PRINT));
+}
+?>

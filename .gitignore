@@ -1,0 +1,11 @@
+/node_modules
+/vendor
+/tempdir
+/.idea
+env.json
+.idea
+package-lock.json
+composer.lock
+npm-debug.log
+yarn-error.log
+temp_module.zip

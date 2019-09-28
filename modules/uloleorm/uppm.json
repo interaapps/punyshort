@@ -1,0 +1,13 @@
+{
+    "name": "uloleorm",
+    "version": "1.0",
+    "description": "",
+    "author": "",
+    "keywords": [
+        "ORM",
+        "PHP",
+        "ULOLE-FRAMEWORK"
+    ],
+    "modules": {},
+    "namespaces": {}
+}

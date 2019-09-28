@@ -1,0 +1,32 @@
+{
+    "databases": {
+        "main": {
+            "driver": "mysql",
+            "username": "",
+            "password": "",
+            "database": "",
+            "server": "",
+            "port": 3306
+        }
+    },
+    "domain": "https://pnsh.ga",
+    "footerlinks": {
+        "Developer API": "/docs/v2/"
+    },
+    "api": {
+        "using": true,
+        "docs": true,
+        "requires_login": true
+    },
+    "Auth": {
+        "using": "none",
+        "interaapps": {
+            "redirect": "https://accounts.interaapps.de/oauth/",
+            "key": ""
+        },
+        "selfhosted": {
+            "NOT AVAILABLE YET!":""
+        }
+    }
+
+}

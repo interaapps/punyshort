@@ -1,0 +1,9 @@
+{
+    "init_scripts": [],
+    "cli_scripts": {},
+    "packages": {
+        ":github": "interaapps\/ulole-orm",
+        "0.0": "ulole-framework"
+    },
+    "directnamespaces": {}
+}

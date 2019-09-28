@@ -1,0 +1,19 @@
+{
+    "name": "PunyShort",
+    "version": "1.0",
+    "description": "Punyshort is a open source link shortener",
+    "directory": "./",
+    "homepages": [
+        "https://interaapps.de",
+        "https://pnsh.ga"
+    ],
+    "author": "InteraApps",
+    "keywords": [
+        "Framework",
+        "PHP"
+    ],
+    "modules": {
+        "interaapps/ulole-orm": ":github"
+    },
+    "namespaces": {}
+}
