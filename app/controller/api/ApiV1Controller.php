@@ -25,7 +25,8 @@ class ApiV1Controller
         if (!isset($_GET["get_informations"])) {
             if (isset($shortlink)) {
                 if ($shortlink != "") {
-                $linkt = $_GET['shortlink'];
+
+                $linkt = $shortlink;
                     if (strpos(strtolower($shortlink), "https://") !== false || strpos(strtolower($shortlink), "http://") !== false) {
 
                         $linkQuery = (new \databases\ShortlinksTable)

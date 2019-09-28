@@ -37,7 +37,7 @@ class Response {
     }
 
     public static function redirect($link, $code=307) {
-        \ob_clean();
+        @ob_clean();
         http_response_code($code);
         header("Location: ".$link);
         echo "<title>Redirecting to ".$link."</title>";
