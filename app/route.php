@@ -70,6 +70,9 @@ $router->middleware("!\app\Middlewares@loggedIn", "!auth\AuthController@redirect
  */
 $router->get("/ia/auth/user/login", "!auth\IaAuthController@login");
 
+$router->get("/(.*)/info", "!LinkController@info");
+$router->get("/info/(.*)", "!LinkController@info");
+
 // Redirector
 $router->get("/(.*)", "!LinkController@redirect");
 

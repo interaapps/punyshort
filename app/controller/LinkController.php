@@ -23,9 +23,10 @@ class LinkController {
             $stats->os = Stats::getOS();
             $stats->browser = Stats::getBrowser();
             $stats->country = Stats::getCountry(Stats::getIP());
-            $stats->date = date("Y-m-d");
+            $stats->day = date("Y-m-d");
             $stats->linkid = $link["id"];
             $stats->save();
+            
             if ($link["blocked"] == 1)
                 return view("blockedlink", [
                     "link"=>$link["link"]
@@ -37,6 +38,19 @@ class LinkController {
     }
 
     public static function info () {
-        
+        global $_ROUTEVAR;
+        $link = (new ShortlinksTable)
+                    ->select("link, name, id, blocked")
+                    ->where("name", $_ROUTEVAR[1])
+                    ->first();
+
+        if ($link["id"] !== null) {
+            view("linkinfo", [
+                "id"=>$link["id"],
+                "link"=>$link["link"],
+                "name"=>$link["name"]
+            ]);
+        } else 
+            view("404");
     }
 }
