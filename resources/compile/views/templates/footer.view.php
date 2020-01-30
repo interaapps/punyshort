@@ -2,9 +2,9 @@
     <div id="footer">
         <div id="footer_inner">
             <img class="noSelection" width="40px" src="https://interaapps.de/assets/interaapps/icon/icon3.png" />
-            <a href="/imprint">Impressum</a>
+            <a href="https://interaapps.de/imprint">Impressum</a>
             <a class="noSelection footerseparator">-</a>
-            <a href="/dsgvo#homepagetopsection">Datenschutz</a>
+            <a href="https://interaapps.de/dsgvo">Datenschutz</a>
             
             <a class="noSelection" id="copyright">InteraApps 2018 - {{date('Y')}}</a>
         </div>

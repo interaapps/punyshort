@@ -4,9 +4,14 @@
 
 <div class="contents">
     <h1>Stop!</h1>
-    <p>This links redirection has been blocked, because of one of this reasons:</p>
+    <p>This links redirection has been blocked by our Team, because of one of this reasons:</p>
     <ul>
-        <li>Scam</li>
+        <li>Scam
+            <ul>
+                <li>Phishing</li>
+                <li>Pornographic scam</li>
+            </ul>
+        </li>
         <li>Viruses</li>
         <li>Illegal page</li>
     </ul>
