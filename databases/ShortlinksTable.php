@@ -7,9 +7,9 @@ class ShortlinksTable extends Table {
     public $id,
            $name,
            $link,
-           $userid,
-           $ip,
-           $blocked,
+           $userid = "0",
+           $ip = "0.0.0.0",
+           $blocked = 0,
            $created;
     
     public function database() {
