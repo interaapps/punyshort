@@ -20,12 +20,20 @@
 <br><br><br><br>
 
 <div class="contents">
-    <h1>What?</h1>
-    <p>PunyShort is a open source Linkshortener. You can easily short long links to a short one!</p>
+    <h1>What is punyshort?</h1>
+    <p>
+        PunyShort is an open source Linkshortener, with which can short huge links in to a tiny one!<br>   
+        You want to track the clicks on the link? No problem! It is also possible. 
+        You can track non-user-related data like the country, browser and the time with which/when the user clicked on the link!
+    </p>
 </div>
 <div style="text-align: center; margin-top: 40px; background: #1a1e27; color: #FFF; padding: 70px 0px; width: 100%; max-width: 100%;" class="contents">
     <h1>Open Source</h1><br>
-    <p>Do you want to contribute and help? Or do you want transparency and look into the code? This project is open source!</p>
+    <p>
+        Do you want to contribute and help? Or do you want transparency and look into the code? This project is open source!
+        <br>If you want to contribute stuff, than you should check out <a href="https://github.com/interaapps/punyshort">Our GitHub page</a>. 
+        <br>You can also put PunyShort on your Server and short links with it. 
+    </p>
 </div>
 <!--
 <div style="text-align: right; margin-top: 60px;" class="contents">
