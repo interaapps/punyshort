@@ -21,7 +21,7 @@ $templates_dir  =  "resources/views/templates/";
  *      -=-=-
  */
 
-$router->get("/", "homepage.php");
+$router->get("/", "!HomepageController@page");
 
 /**
  * API

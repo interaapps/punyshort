@@ -2,7 +2,12 @@
 <div class="homepageimage">
     
     <div class="shortlink" id="shortlinkdiv">
-        <input type="text" class="shortlinkinput" id="shortlinkinput" placeholder="https://pnsh.ga">
+        <input type="text" class="shortlinkinput" id="shortlinkinput" placeholder="https://example.interaapps.de">
+        <select id="shortlinkdomain">
+            @foreach(($domains as $domain))#
+                <option value="{{$domain["domain_name"]}}">{{$domain["domain_name"]}}</option>
+            @endforeach
+        </select>
         <a class="noSelection shortlinksubmit" id="shortlinksubmit">Send</a>
     </div>
 
@@ -118,7 +123,8 @@
         $("#shortlinksubmit").click(function() {
             if ($("#shortlinkinput").val() != "") {
                 Cajax.post("/api/v2/short", {
-                    link: $("#shortlinkinput").val()
+                    link: $("#shortlinkinput").val(),
+                    domain: $("#shortlinkdomain").val()
                 }).then((resp)=>{
                     link = JSON.parse(resp.responseText);
                     $("#outputlink").hide();

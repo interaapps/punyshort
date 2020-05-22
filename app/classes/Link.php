@@ -31,6 +31,7 @@ class Link {
             $newLink->link = $this->link;
             $newLink->ip   = Request::getRemoteAddress();
             $newLink->domain = $this->domainName;
+            
             if ((new \databases\DomainsTable)->select("id")->where("domain_name", $newLink->domain)->first()["id"] === null) {
                 $newLink->domain = (new \databases\DomainsTable)->select()->where("is_default", "1")->first()["domain_name"];
             }

@@ -23,10 +23,8 @@ class ApiV2Controller
         if (isset($_POST["domain"]))
             $domainName = $_POST["domain"];
 
-            
         if ((new \databases\DomainsTable)->select("id")->where("domain_name", $domainName)->andwhere("is_public", "1")->first()["id"] === null)
-            $domainName = (new \databases\DomainsTable)->select()->where("is_public", "1")->first()["domain_name"];
-
+            $domainName = (new \databases\DomainsTable)->select()->where("is_default", "1")->first()["domain_name"];
             
         if (trim($link) != "") {
             if (Str::contains("://", $link)) {
@@ -41,7 +39,7 @@ class ApiV2Controller
 
                 if ($existLink["id"] == null) {
                     $newLink = new Link($link);
-                    $newLink->domain = $domainName;
+                    $newLink->domainName = $domainName;
                     $newLinkLink = $newLink->create();
                     if ($newLinkLink["done"]) {
                         $out["link"] = $newLinkLink["link"];

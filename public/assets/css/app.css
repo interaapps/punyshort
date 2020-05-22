@@ -136,6 +136,16 @@ p {
     box-sizing: border-box;
 }
 
+#shortlinkdomain {
+    background: transparent;
+    border: none;
+    padding-right: 5px;
+    margin-right: 10px;
+    font-size: 18px;
+    color: #111111;
+
+}
+
 .shortlinkinput:focus {
     border: #105DE6 solid 2px;
 }
