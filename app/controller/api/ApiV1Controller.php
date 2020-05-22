@@ -13,7 +13,8 @@ class ApiV1Controller
      * @deprecated
      */
     public static function create() {
-
+        return "Deprecated";
+/*
         if (isset($_GET["shortlink"]))
             $shortlink = $_GET["shortlink"];
 
@@ -137,6 +138,7 @@ class ApiV1Controller
 "error": "none"
 }';
         }
+        */
     }
 
 }

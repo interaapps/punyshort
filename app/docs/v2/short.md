@@ -6,6 +6,7 @@ Short a link.
 <br><br>Parameters<br>
 ```json
 link: "https://interaapps.de"
+domain: "pnsh.ga"
 ```
 <!--
 <br><br>

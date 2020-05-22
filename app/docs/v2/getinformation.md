@@ -1,7 +1,7 @@
 # Get Link Information
 
 <br><br>
-`GET https://punyshort.ga/api/v2/getinformation/{Link Name (Like: as7Xbs)}`
+`GET https://punyshort.ga/api/v2/getinformation/{Link Name (Like: as7Xbs)}?domain={Domain (like pnsh.ga)}`
 <br><br>
 Response `JSON`:
 <br><br>

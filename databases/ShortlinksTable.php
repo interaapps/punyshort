@@ -9,6 +9,7 @@ class ShortlinksTable extends Table {
            $link,
            $userid = "0",
            $ip = "0.0.0.0",
+           $domain,
            $blocked = 0,
            $created;
     

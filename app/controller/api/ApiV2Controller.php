@@ -18,25 +18,35 @@ class ApiV2Controller
             "full_link"=>false,
             "error"=>3
         ];
-        
+
+        $domainName = $_SERVER['SERVER_NAME'];
+        if (isset($_POST["domain"]))
+            $domainName = $_POST["domain"];
+
+            
+        if ((new \databases\DomainsTable)->select("id")->where("domain_name", $domainName)->andwhere("is_public", "1")->first()["id"] === null)
+            $domainName = (new \databases\DomainsTable)->select()->where("is_public", "1")->first()["domain_name"];
+
+            
         if (trim($link) != "") {
             if (Str::contains("://", $link)) {
                 $existLink = (new ShortlinksTable)
                     ->select('*')
                     ->where("link", $link)
+                    ->andwhere("domain", $domainName)
                     ->first();
 
-                if (isset($ULOLE_CONFIG_ENV->domain))
-                    $domain = $ULOLE_CONFIG_ENV->domain;
-                else
-                    $domain = "https://".$_SERVER['SERVER_NAME'];
+               
+                $domain = "https://".$domainName;
 
                 if ($existLink["id"] == null) {
                     $newLink = new Link($link);
+                    $newLink->domain = $domainName;
                     $newLinkLink = $newLink->create();
                     if ($newLinkLink["done"]) {
                         $out["link"] = $newLinkLink["link"];
                         $out["full_link"] = $domain."/".$newLinkLink["link"];
+                        $out["domain"] = $domainName;
                         $out["error"] = 0;
                     } else {
                         $out["error"] = 3;
@@ -44,6 +54,7 @@ class ApiV2Controller
                 } else {
                     $out["link"] = $existLink["name"];
                     $out["full_link"] = $domain."/".$existLink["name"];
+                    $out["domain"] = $domainName;
                     $out["error"] = 0;
                 }
             } else
@@ -62,6 +73,19 @@ class ApiV2Controller
     public static function getInformation() {
         global $_ROUTEVAR;
         header('Access-Control-Allow-Origin: *');
+
+        $domainName = $_SERVER['SERVER_NAME'];
+    
+        // TESTING PURPOSES
+        if ($domainName == "0.0.0.0")
+            $domainName = "pnsh.ga";
+
+        if (isset($_GET["domain"]))
+            $domainName = $_GET["domain"];
+
+        if ((new \databases\DomainsTable)->select("id")->where("domain_name", $domainName)->first()["id"] === null)
+            $domainName = (new \databases\DomainsTable)->select()->where("is_default", "1")->first()["domain_name"];
+            
         $out = [
             "clicks"=>[],
             "click"=>[],
@@ -80,6 +104,7 @@ class ApiV2Controller
             $link = (new ShortlinksTable)
                         ->select('*')
                         ->where("name", $_ROUTEVAR[1])
+                        ->andwhere("domain", $domainName)
                         ->first();
         }
         if ($link["id"] != null) {
