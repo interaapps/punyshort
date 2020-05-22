@@ -58,7 +58,7 @@ class LinkController {
             $domainName = $_GET["domain"];
 
         if ((new \databases\DomainsTable)->select("id")->where("domain_name", $domainName)->andwhere("is_public", "1")->first()["id"] === null)
-            $domainName = (new \databases\DomainsTable)->select()->where("is_default", "1")->first()["domain_name"];
+            $domainName = "";
 
         $link = (new ShortlinksTable)
                     ->select("link, name, id, blocked")
@@ -66,7 +66,7 @@ class LinkController {
                     ->andwhere("domain", $domainName)
                     ->first();
 
-        if ($link["id"] !== null) {
+        if ($link["id"] !== null && $domainName != "") {
             view("linkinfo", [
                 "id"=>$link["id"],
                 "link"=>$link["link"],

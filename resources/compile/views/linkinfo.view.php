@@ -4,7 +4,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>
 
 <div class="contents">
-    <h1>pnsh.ga/{[{$name}]} · ID: {[{$id}]}</h1>
+    <h1>{{$domain}}/{[{$name}]} · ID: {[{$id}]}</h1>
     <p>PunyshortLink: <a href="/{[{$name}]}">pnsh.ga/{[{$name}]}</a><br>
     Real: <a href="{[{$link}]}">{[{$link}]}</a></p>
 
@@ -75,7 +75,7 @@ function createChart(div, label, data, type="line"){
 
 $(document).ready(function(){
 
-    Cajax.get("/api/v2/getinformation/{[{$name}]}").then(function(response){
+    Cajax.get("/api/v2/getinformation/{[{$name}]}?domain={{$domain}}").then(function(response){
         const parsed = JSON.parse(response.responseText);
 
         createChart("clicks_chart", "Clicks", parsed.click);
