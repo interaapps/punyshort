@@ -5,7 +5,7 @@
         <input type="text" class="shortlinkinput" id="shortlinkinput" placeholder="https://example.interaapps.de">
         <select id="shortlinkdomain">
             @foreach(($domains as $domain))#
-                <option value="{{$domain["domain_name"]}}">{{$domain["domain_name"]}}</option>
+                <option @if(($_SERVER['SERVER_NAME'] == $domain["domain_name"]))#selected@endif value="{{$domain["domain_name"]}}">{{$domain["domain_name"]}}</option>
             @endforeach
         </select>
         <a class="noSelection shortlinksubmit" id="shortlinksubmit">Send</a>

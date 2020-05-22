@@ -5,7 +5,7 @@
         <input type="text" class="shortlinkinput" id="shortlinkinput" placeholder="https://example.interaapps.de">
         <select id="shortlinkdomain">
             <?php foreach($domains as $domain):?>
-                <option value="<?php echo ($domain["domain_name"]); ?>"><?php echo ($domain["domain_name"]); ?></option>
+                <option <?php if($_SERVER['SERVER_NAME'] == $domain["domain_name"]):?>selected<?php endif; ?> value="<?php echo ($domain["domain_name"]); ?>"><?php echo ($domain["domain_name"]); ?></option>
             <?php endforeach; ?>
         </select>
         <a class="noSelection shortlinksubmit" id="shortlinksubmit">Send</a>
