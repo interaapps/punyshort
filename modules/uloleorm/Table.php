@@ -38,6 +38,15 @@ class Table {
         $this->__databaseObj__ = SQL::$databases[$this->__database__];
     }
 
+    function setTable(string $table){
+        $this->_table_name_ = $table;
+    }
+
+    function setDatabase(string $database){
+        $this->__database__ = $database;
+    }
+
+
     function getObject() {
         return $this->__databaseObj__->getObject();
     }
@@ -60,5 +69,10 @@ class Table {
     function update($select = "*") {
         $con = $this->__databaseObj__->getObject();
         return (new Update($this, $select, $this->__databaseObj__));
+    }
+
+    function count() {
+        $con = $this->__databaseObj__->getObject();
+        return (new Count($this, $this->__databaseObj__));
     }
 }

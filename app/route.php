@@ -10,6 +10,8 @@
  *  to PunyShort! 
  */
 
+use app\controller\DataTableController;
+use app\classes\DataTable;
 
 // Directory for the views
 $views_dir      =  "resources/views/";
@@ -62,6 +64,29 @@ $router->middleware("!\app\Middlewares@loggedIn", "!auth\AuthController@redirect
     {
         $router->get("",  "!dashboard\DashboardController@index");
         $router->get("/", "!dashboard\DashboardController@index");
+
+        $router->get("/domains", "!dashboard\CustomDomainsController@page");
+        $router->get("/api/getdomains", "!dashboard\CustomDomainsController@getDomains");
+        $router->get("/links", "!dashboard\CreatedLinksController@page");
+
+
+        DataTableController::addDataTable("owndomains", (new DataTable(\databases\DomainsTable::class, [
+            "id", "domain_name", "created"
+        ]))->setExtraDataFunction(function($key, $value, $options){
+            if ($key == "id") {
+                if (!((new \databases\DomainUsersTable)->count()->where("userid", \app\classes\user\User::$user->id)->andwhere("domainid", $value)->get() > 0))
+                    $options->delete = true;
+            }
+            return [];
+        }));
+
+        DataTableController::addDataTable("ownlinks", (new DataTable(\databases\ShortlinksTable::class, [
+            "id", "domain", "name", "link", "created"
+        ]))->setExtraDataFunction(function($key, $value, $options){
+            return [];
+        })->customQuery(function($query){
+            $query->andwhere("userid", \app\classes\user\User::$user->id);
+        }));
     });
 });
 
@@ -69,6 +94,9 @@ $router->middleware("!\app\Middlewares@loggedIn", "!auth\AuthController@redirect
  * Authentification
  */
 $router->get("/ia/auth/user/login", "!auth\IaAuthController@login");
+
+
+$router->get("/datatable", "!DataTableController@api");
 
 $router->get("/(.*)/info", "!LinkController@info");
 $router->get("/info/(.*)", "!LinkController@info");

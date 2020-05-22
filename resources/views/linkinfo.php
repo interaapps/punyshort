@@ -75,7 +75,9 @@ function createChart(div, label, data, type="line"){
 
 $(document).ready(function(){
 
-    Cajax.get("/api/v2/getinformation/<?php echo htmlspecialchars($name); ?>?domain=<?php echo ($domain); ?>").then(function(response){
+    Cajax.get("/api/v2/getinformation/<?php echo htmlspecialchars($name); ?>", {
+        domain: "<?php echo ($domain); ?>"
+    }).then(function(response){
         const parsed = JSON.parse(response.responseText);
 
         createChart("clicks_chart", "Clicks", parsed.click);

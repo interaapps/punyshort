@@ -3,13 +3,23 @@ namespace ulole\core\classes;
 
 class Request {
 
-    public static function getPost($param=false) {
+    public static function routeVar($param=false) {
+        global $_ROUTEVAR;
         if ($param === false)
-            return $_POST;
-        return $_POST[$param];
+            return $_ROUTEVAR;
+        return $_ROUTEVAR[$param];
     }
 
-    public static function getGet($param=false) {
+    public static function POST($param=false) {
+        if ($param === false)
+            return $_POST;
+
+        if (isset($_POST[$param]))
+            return $_POST[$param];
+        return null;
+    }
+
+    public static function GET($param=false) {
         if ($param === false)
             return $_GET;
         return $_GET[$param];

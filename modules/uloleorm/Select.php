@@ -13,18 +13,18 @@ class Select extends Selector {
 
   
     function limit($limit) {
-        $this->query .= 'LIMIT '.$limit;
+        $this->query .= ' LIMIT '.$limit;
         return $this;
     }
 
     function order($order) {
-        $this->query .= 'ORDER BY '.$order;
+        $this->query .= ' ORDER BY '.$order." ";
         return $this;
     }
 
 
     function get() {
-        return $this->con->query($this->query.';')->fetchAll();        
+        return $this->con->query($this->query.';')->fetchAll();
     }
 
     function first() {

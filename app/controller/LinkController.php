@@ -57,8 +57,15 @@ class LinkController {
         if (isset($_GET["domain"]))
             $domainName = $_GET["domain"];
 
-        if ((new \databases\DomainsTable)->select("id")->where("domain_name", $domainName)->andwhere("is_public", "1")->first()["id"] === null)
+        $domain = (new \databases\DomainsTable)->select("id, domain_name, is_public")->where("domain_name", $domainName)->first();
+        
+        if ($domain["id"] === null) {
             $domainName = "";
+        } else if (USER_LOGGEDIN && (new \databases\DomainUsersTable)->count()->where("userid", \app\classes\user\User::$user->id)->andwhere("domainid", $domain["id"])->get() > 0) {
+            $domainName = $domain["domain_name"];
+        } else if ($domain["is_public"] == "0") {
+            $domainName = "";
+        } 
 
         $link = (new ShortlinksTable)
                     ->select("link, name, id, blocked")

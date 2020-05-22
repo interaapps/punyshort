@@ -15,7 +15,7 @@ class Compile {
         }
     }
 
-    public static function compileViews($dir, $enddir) {
+    public static function compileViews($dir, $enddir, $output = true) {
         $replaceArray = [
             "{[{"=>'<?php echo htmlspecialchars(',
             "}]}"=>'); ?>',
@@ -31,6 +31,8 @@ class Compile {
             
             "@import(("=>"<?php import(",
             "@view(("=>"<?php view(",
+            "@component(("=>"<?php view(",
+            "@comp(("=>"<?php view(",
             "@template(("=>"<?php tmpl(",
 
             "))!"=>"); ?>",
@@ -42,6 +44,9 @@ class Compile {
             '@endforeach'=>"<?php endforeach; ?>",
             '@endwhile'=>"<?php endwhile; ?>",
             
+            '<!#--'=>"<?php /*",
+            '--#>'=>"*/?>",
+
             '<?#'=>'<?php',
             '#?>'=>'?>'
         ];
@@ -52,10 +57,11 @@ class Compile {
                 if (is_dir($dir."/".$file)){
                     if(!\is_dir($enddir."/".$file))
                         \mkdir($enddir."/".$file);
-                    self::compileViews($dir."/".$file, $enddir."/".$file);
+                    self::compileViews($dir."/".$file, $enddir."/".$file, $output);
                 } elseif (strpos($file, "view.php")) {
                     \file_put_contents($enddir."/".str_replace(".view.php", ".php", $file), \ulole\core\classes\Replace::replaceByArray($replaceArray, \file_get_contents($dir."/".$file)));
-                    echo "\nview.php renderer: rendered: ".$enddir.$dir."/".$file." into ".$enddir."/".str_replace(".view.php", ".php", $file);
+                    if ($output)
+                        echo "\nview.php renderer: rendered: ".$enddir.$dir."/".$file." into ".$enddir."/".str_replace(".view.php", ".php", $file);
                 }
             }        
         }

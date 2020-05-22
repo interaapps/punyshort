@@ -23,9 +23,18 @@ class ApiV2Controller
         if (isset($_POST["domain"]))
             $domainName = $_POST["domain"];
 
-        if ((new \databases\DomainsTable)->select("id")->where("domain_name", $domainName)->andwhere("is_public", "1")->first()["id"] === null)
-            $domainName = (new \databases\DomainsTable)->select()->where("is_default", "1")->first()["domain_name"];
-            
+        $domain = (new \databases\DomainsTable)->select("id, domain_name, is_public, is_default")->where("domain_name", $domainName)->first();
+
+        if ($domain["id"] === null) {
+            $domainName = "";
+        } else if (USER_LOGGEDIN && (new \databases\DomainUsersTable)->count()->where("userid", \app\classes\user\User::$user->id)->andwhere("domainid", $domain["id"])->get() > 0) {
+            $domainName = $domain["domain_name"];
+        } else if ($domain["is_public"] == "0") {
+            $domainName = "";
+        } 
+
+        $customDomain = $domain["domain_name"] !== null && $domain["domain_name"] == $domainName && $domain["is_default"] == "0" && isset($_POST["name"]) && \trim($_POST["name"]) != "" && preg_match('#^[A-Za-z0-9_]+$#', $_POST["name"]);
+
         if (trim($link) != "") {
             if (Str::contains("://", $link)) {
                 $existLink = (new ShortlinksTable)
@@ -35,15 +44,18 @@ class ApiV2Controller
                     ->first();
 
                
-                $domain = "https://".$domainName;
 
-                if ($existLink["id"] == null) {
+                if ($existLink["id"] == null || $customDomain) {
                     $newLink = new Link($link);
+
+                    if ($customDomain)
+                        $newLink->name = $_POST["name"];
+
                     $newLink->domainName = $domainName;
                     $newLinkLink = $newLink->create();
                     if ($newLinkLink["done"]) {
                         $out["link"] = $newLinkLink["link"];
-                        $out["full_link"] = $domain."/".$newLinkLink["link"];
+                        $out["full_link"] = "https://".$domainName."/".$newLinkLink["link"];
                         $out["domain"] = $domainName;
                         $out["error"] = 0;
                     } else {
@@ -51,7 +63,7 @@ class ApiV2Controller
                     }
                 } else {
                     $out["link"] = $existLink["name"];
-                    $out["full_link"] = $domain."/".$existLink["name"];
+                    $out["full_link"] = "https://".$domainName."/".$existLink["name"];
                     $out["domain"] = $domainName;
                     $out["error"] = 0;
                 }
@@ -81,8 +93,15 @@ class ApiV2Controller
         if (isset($_GET["domain"]))
             $domainName = $_GET["domain"];
 
-        if ((new \databases\DomainsTable)->select("id")->where("domain_name", $domainName)->first()["id"] === null)
-            $domainName = (new \databases\DomainsTable)->select()->where("is_default", "1")->first()["domain_name"];
+        $domain = (new \databases\DomainsTable)->select("id, domain_name, is_public")->where("domain_name", $domainName)->first();
+        
+        if ($domain["id"] === null) {
+            $domainName = "";
+        } else if (USER_LOGGEDIN && (new \databases\DomainUsersTable)->count()->where("userid", \app\classes\user\User::$user->id)->andwhere("domainid", $domain["id"])->get() > 0) {
+            $domainName = $domain["domain_name"];
+        } else if ($domain["is_public"] == "0") {
+            $domainName = "";
+        } 
             
         $out = [
             "clicks"=>[],

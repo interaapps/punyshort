@@ -30,3 +30,27 @@ $(document).ready(function() {
 
 
 });
+
+var snackBarTimeout;
+  
+function showSnackBar(text, color="#17fc2e", background="#1e212b") {
+    var snackbar = document.querySelector('#snackbar');
+    snackbar.textContent = text;
+    snackbar.style.color = color;
+    snackbar.style.backgroundColor = background;
+    snackbar.classList.add('show');
+    clearTimeout(snackBarTimeout);
+    snackBarTimeout = setTimeout(() => {
+        snackbar.classList.remove('show');
+    }, 1500);
+}
+
+
+
+$(window).on("online", function(){
+    showSnackBar("You are online!");
+});
+
+$(window).on("offline", function(){
+    showSnackBar("You are offline!", "#fa1121");
+});

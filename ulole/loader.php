@@ -6,12 +6,14 @@
  */
 
 spl_autoload_register(function($class) {
-    @include_once "./".str_replace("\\","/",$class).".php";
+    if (file_exists("./".str_replace("\\","/",$class).".php"))
+        @include_once "./".str_replace("\\","/",$class).".php";
 });
 
 //   Autoloading for app/controller   //
 spl_autoload_register(function($class) {
-    @include_once "./app/controller/".str_replace("\\","/",$class).".php";
+    if (file_exists("./app/controller/".str_replace("\\","/",$class).".php"))
+        @include_once "./app/controller/".str_replace("\\","/",$class).".php";
 });
 
 if(file_exists("conf.json")) {

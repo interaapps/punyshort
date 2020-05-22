@@ -30,7 +30,7 @@ class ErrorHandling
             exit();
         } else {
             $tempId = "ULOLE_ERROR__".\rand(0000000000, 9999999999);
-            echo $error." in ".$file." on linea ".$line."\n";
+            echo $error." in ".$file." on line ".$line."\n";
             echo '<!-- THIS IS FOR THE FRONTEND ERRORMESSAGE --><div id="'.$tempId.'"></div><script>
 var xhr=new XMLHttpRequest(); xhr.open("GET",window.location+"?ulole_____a=t");
 xhr.onload=()=>{document.getElementById("'.$tempId.'").innerHTML=xhr.responseText;}

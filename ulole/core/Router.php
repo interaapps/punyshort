@@ -163,17 +163,30 @@ class Router {
 
 
     public function load($view, $require, $parent=false) {
-      global $_ROUTEVAR;
-      //echo $require."--";
+	  global $_ROUTEVAR;
+	  
       if ($require !== $parent->viewsDirectory."@") {
-        if (is_callable($view))
-              echo $view();
-          else
+        if (is_callable($view)) {
+			$out = $view();
+			if (is_array($out) && function_exists("json_decode")) {
+				header('Content-Type: application/json');
+				echo json_encode($out);
+			} else
+				echo $out;
+		} else
             if (strpos($view, "!") !== false) {
+				$out = "";
               if (strpos($view, "@") !== false)
-                echo call_user_func(  $this->namespace.Router::get_string_between($view, "!", "@").'::'.Router::get_string_between($view, "@", "") );
+			  	$out = call_user_func(  $this->namespace.Router::get_string_between($view, "!", "@").'::'.Router::get_string_between($view, "@", "") );
               else
-                echo call_user_func(Router::get_string_between($view, "!", ""));
+				$out = call_user_func(Router::get_string_between($view, "!", ""));
+
+			  if (is_array($out) && function_exists("json_decode")) {
+				header('Content-Type: application/json');
+				  echo json_encode($out);
+			  } else {
+				  echo $out;
+			  }
             } else {
               require $require;
             }
@@ -190,42 +203,53 @@ class Router {
       $this->route["@__404__@"] = $func;
     }
 
+	function all($route, $func) {
+		$this->route[$route] = $func;
+		return $this;
+	}
+
     function post($route, $func) {
       if (!isset($this->requestMethod[$route])) $this->requestMethod[$route] = [];
       if (!isset($this->route[$route]))
         $this->route[$route] = "@";
-        $this->requestMethod[$route]["post"] = $func;
+		$this->requestMethod[$route]["post"] = $func;
+		return $this;
     }
   
     function get($route, $func) {
       if (!isset($this->requestMethod[$route])) $this->requestMethod[$route] = [];
       $this->route[$route] = $func;
-      $this->requestMethod[$route]["get"] = $func;
+	  $this->requestMethod[$route]["get"] = $func;
+	  return $this;
     }
   
     function delete($route, $func) {
       if (!isset($this->requestMethod[$route])) $this->requestMethod[$route] = [];
       if (!isset($this->route[$route]))
         $this->route[$route] = "@";
-      $this->requestMethod[$route]["delete"] = $func;
+	  $this->requestMethod[$route]["delete"] = $func;
+	  return $this;
     }
   
     function put($route, $func) {
       if (!isset($this->route[$route]))
         $this->route[$route] = "@";
       $this->requestMethod[$route] = ["put"=>$func];
-    }
+	  return $this;
+	}
   
     function trace($route, $func) {
       if (!isset($this->route[$route]))
         $this->route[$route] = "@";
       $this->requestMethod[$route] = ["trace"=>$func];
-    }
+	  return $this;
+	}
 
     function connect($route, $func) {
       if (!isset($this->route[$route]))
         $this->route[$route] = "@";
-      $this->requestMethod[$route] = ["connect"=>$func];
+	  $this->requestMethod[$route] = ["connect"=>$func];
+	  return $this;
     }
 
     public static function view($templatesDirectory_name, $vars=false) {

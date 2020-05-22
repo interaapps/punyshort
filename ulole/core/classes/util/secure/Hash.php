@@ -97,10 +97,23 @@ class Hash {
         return hash("crc32b", $value);
     }
 
-    
-
     public static function hash($algo, $value) {
         return hash($algo, $value);
+    }
+
+
+    /**
+     * Hashes the password
+     */
+    public static function passwordHash($password){
+        return \password_hash($password, PASSWORD_DEFAULT);
+    }
+
+    /**
+     * Verifies if your the is the same to the hash
+     */
+    public static function passwordVerify($password, $hash){
+        return \password_verify($password, $hash);
     }
 
 

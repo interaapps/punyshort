@@ -142,7 +142,7 @@ p {
     padding-right: 5px;
     margin-right: 10px;
     font-size: 18px;
-    color: #111111;
+    color: #111111;xTmziVn08aGt94o7oMlcin1MwN2ebZ89SJZ5rKhyWKa9L6w2GKc4Re4rEoN03F2aKntWgwLzsO7s0FARSpORSiwNgfZBPFm4zWAl
 
 }
 
@@ -257,6 +257,30 @@ p {
 
 #dashboardcontents {
     margin-left: 260px;
+    padding: 0px 60px;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+.flatInput {
+    width: 100%;
+    border: 2px solid #EEEEEE;
+    background: #FFFFFF;
+    padding: 8px;
+    margin: 10px 0px;
+    display: block;
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    border-radius: 5px;
+    transition: 0.3s;
+    box-sizing: border-box;
+}
+
+.flatInput:hover {
+    border: 2px solid #4542f4;
+}
+
+.flatInput:focus {
+    border: 2px solid #4542f4;
 }
 
 
@@ -296,5 +320,129 @@ p {
 
     #nav {
         padding: 0px 20px;
+    }
+}
+
+
+.button {
+    padding: 10px 22px;
+    cursor: pointer;
+    display: inline-block;
+    border-radius: 4px;
+    box-shadow: 0px 2px 2px 0px #00000033;
+    transition: 0.3s box-shadow;
+    text-align: center;
+    user-select: none;
+    border: none;
+    text-decoration: none;
+    background: #4542f4;
+    color: #FFFFFF;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.datatable {
+    width: 100%;
+}
+
+.datatable .dt-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    border-spacing: 0 101px;
+}
+
+.datatable .dt-table tr {
+    border-top: 1px solid #00000022;
+}
+
+.datatable .dt-table td {
+    padding: 4px 0px;
+    white-space: nowrap;
+}
+
+.datatable .dt-table td.dt-buttons {
+    text-align: end;
+}
+
+.datatable .dt-previous-page, .datatable .dt-next-page {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    vertical-align: middle;
+    margin: 0px 5px;
+}
+
+.datatable .dt-previous-page:hover,
+.datatable .dt-next-page:hover {
+    background: #00000022;
+    cursor: pointer;
+    border-radius: 100px;
+}
+
+.datatable .dt-search {
+    float: right;
+}
+
+.datatable .dt-pagination {
+    float: right;
+}
+
+.datatable .dt-rows-per-page {
+    background: transparent;
+}
+
+
+.alert_title {
+    text-align: center;
+    width: calc(100% - 100px);
+}
+
+#snackbar {
+    background-color: #ffffff;
+    color: #17fc2e;
+    text-align: center;
+    border-radius: 3px;
+    padding: 16px 32px;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    transition: 0.3s;
+    opacity: 0;
+}
+
+#snackbar.show {
+    transform: translate(-50%, 0%);
+    transition: 0.5s;
+    opacity: 1;
+}
+
+@media screen and (max-width: 720px) {
+    .alert_contents {
+        height: 100%;
+        width: 390px;
+        margin: auto;
+    }
+
+    .alert_alert {
+        height: 100%;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 300px) {
+    .alert_contents {
+        width: 300px;
     }
 }

@@ -25,7 +25,6 @@ class Update extends Selector {
         $outputString = "";
         foreach ($this->that as $key=>$value) {
             if ($key !== "_table_name_" && $key !== "__databaseObj__" && $key !== "__database__" ) {
-                if (!isset($value)) echo ":: $key is NOT SET!\n"; else echo "$key is set!";
                 if (isset($value)) {
                     if ($outputString == "") {
                         $outputString .= ' SET ';

@@ -1,0 +1,84 @@
+.alert_background {
+    background: #00000022;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 1000000;
+}
+
+.alert_alert {
+    background: #FFFFFF;
+    min-height: 100px;
+    min-width: 400px;
+    max-width: 90%;
+    display: inline-block;
+    border-radius: 7px;
+    top: 50%;
+    box-shadow: 0 2px 1px -1px rgba(0,0,0,0.2),0 1px 1px 0 rgba(0,0,0,0.141),0 1px 3px 0 rgba(0,0,0,0.122);
+    left: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    -o-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    margin: 200px 50%;
+}
+
+.alert_closebutton {
+    left: 10px;
+    top: 8.6px;
+    border-radius: 100px;
+    padding: 5px;
+    font-size: 20px;
+    height: 25px;
+    position: absolute;
+    z-index: 100001;
+}
+
+.alert_title {
+    left: 50px;
+    font-size: 21.3px;
+    top: 8.6px;
+    position: absolute;
+}
+
+.alert_contents {
+    box-sizing: border-box;
+    padding: 50px 9px;
+
+}
+
+.alert_closebutton:hover {
+    background: #00000011;
+}
+
+.alert_closebutton:focus {
+    background: #00000022;
+}
+
+.alert_button {
+    padding: 5px 27px;
+    background: #4566ee;
+    color: #FFFFFF;
+    left: 14px;
+    margin-right: 5px;
+    top: 8px;
+    border-radius: 5px;
+    vertical-align: middle;
+    font-size: 14.7px;
+    cursor: pointer;
+}
+.alert_button i {
+    vertical-align: middle;
+    font-size: 16.7px;
+    padding-bottom: 3.03px;
+}
+
+.alert_toolbar {
+    bottom: 0px;
+    position: fixed;
+    width: 100%;
+    height: 50px;
+}

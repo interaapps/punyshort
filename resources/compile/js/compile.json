@@ -2,6 +2,8 @@
     "assets/js/app.js": [
         "Cajax.js",
         "jdom.js",
+        "alerts.js",
+        "datatables.js",
         "app.js"
     ]
 }

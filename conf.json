@@ -10,7 +10,8 @@
     "debug": "justtestserver",
     "options": {
         "defaultlang": "en",
-        "detectlanguage": false
+        "detectlanguage": false,
+        "autoCompileOnDebug": true
     }
 
 }

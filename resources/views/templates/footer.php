@@ -9,5 +9,6 @@
             <a class="noSelection" id="copyright">InteraApps 2018 - <?php echo (date('Y')); ?></a>
         </div>
     </div>
+    <a id="snackbar"></a>
 </body>
 </html>

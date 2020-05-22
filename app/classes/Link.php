@@ -8,8 +8,9 @@ use ulole\core\classes\util\Str;
 class Link {
 
     public $link,
-           $name,
+           $name = null,
            $domainName = "",
+           $user = null,
            $id;
 
     public function __construct($link) {
@@ -17,8 +18,8 @@ class Link {
     }
 
     public function create() {
-        
-        $this->name = Str::random(rand(6, 9));
+        if ($this->name === null)
+            $this->name = Str::random(rand(6, 9));
 
         $link = (new ShortlinksTable)
                 ->select('*')
@@ -32,6 +33,9 @@ class Link {
             $newLink->ip   = Request::getRemoteAddress();
             $newLink->domain = $this->domainName;
             
+            if($this->user === null && USER_LOGGEDIN)
+                $newLink->userid = \app\classes\user\User::$user->id; 
+
             if ((new \databases\DomainsTable)->select("id")->where("domain_name", $newLink->domain)->first()["id"] === null) {
                 $newLink->domain = (new \databases\DomainsTable)->select()->where("is_default", "1")->first()["domain_name"];
             }
