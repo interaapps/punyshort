@@ -17,6 +17,15 @@
     </ul>
     
     <p>If you anyway want to go to this link: <a href="{{htmlspecialchars($link)}}">{{htmlspecialchars($link)}}</a></p>
+        <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-7136454966632869"
+        data-ad-slot="5227372149"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
 </div>
 
 
