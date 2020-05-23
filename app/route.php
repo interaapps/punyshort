@@ -69,6 +69,9 @@ $router->middleware("!\app\Middlewares@loggedIn", "!auth\AuthController@redirect
         $router->get("/api/getdomains", "!dashboard\CustomDomainsController@getDomains");
         $router->get("/links", "!dashboard\CreatedLinksController@page");
 
+        $router->delete("/link/([0-9]*)/delete", "!dashboard\CreatedLinksController@deleteLink");
+        $router->post("/link/([0-9]*)/edit", "!dashboard\CreatedLinksController@editLink");
+
 
         DataTableController::addDataTable("owndomains", (new DataTable(\databases\DomainsTable::class, [
             "id", "domain_name", "created"

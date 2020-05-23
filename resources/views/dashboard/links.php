@@ -42,14 +42,34 @@
 
                         editLinkAlert.addHtml(linkInput)
                             .addHtml(domainsInput)
-                            .addHtml(customUrlInput).addHtml($n("a").text("Editing doesnt work yet."));
+                            .addHtml(customUrlInput);
 
-                        editLinkAlert.addButton("ADD", function () {
-
+                        editLinkAlert.addButton("EDIT", function () {
+                            Cajax.post("/dashboard/link/"+data.values.id+"/edit", {
+                                link: linkInput.val()
+                            }).then(function(res){
+                                const parsed = JSON.parse(res.responseText);
+                                if (parsed.done) {
+                                    showSnackBar("Done");
+                                    editLinkAlert.close();
+                                    dataTable.load();
+                                } else {
+                                    showSnackBar("Error: "+parsed.error);
+                                }
+                            }).send();
                         });
 
                         editLinkAlert.addButton("DELETE", function () {
-
+                            Cajax.delete("/dashboard/link/"+data.values.id+"/delete").then(function(res){
+                                const parsed = JSON.parse(res.responseText);
+                                if (parsed.done) {
+                                    showSnackBar("Done");
+                                    editLinkAlert.close();
+                                    dataTable.load();
+                                } else {
+                                    showSnackBar("Error: "+parsed.error);
+                                }
+                            }).send();
                         });
 
                         editLinkAlert.open();

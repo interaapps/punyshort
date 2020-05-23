@@ -41,7 +41,8 @@
 }
 
 #docsv2sidenav {
-    background: #EEEEEE;
+    background: #00000010;
+    border-radius: 6px;
     width: 300px;
     box-sizing: border-box;
     padding: 20px;
@@ -70,20 +71,19 @@
 }
 
 #docsv2contents pre {
-    background: #EFEFEF;
+    background: #00000011;
     padding: 6px;
     border-radius: 6px;
 }
 
 #docsv2contents code {
-    background: #EFEFEF;
     font-size: 16px;
     padding: 2px 5px;
     border-radius: 6px;
 }
 
 .article_creator {
-    background: #EFEFEF;
+    background: #00000011;
     border-radius: 6px;
     margin-top: 40px;
     padding: 17px;

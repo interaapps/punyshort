@@ -32,7 +32,7 @@
         You can track non-user-related data like the country, browser and the time with which/when the user clicked on the link!
     </p>
 </div>
-<div style="text-align: center; margin-top: 40px; background: #1a1e27; color: #FFF; padding: 70px 0px; width: 100%; max-width: 100%;" class="contents">
+<div style="text-align: center; margin-top: 40px; background: #1a1e27EE; color: #FFFFFF; padding: 70px 0px; width: 100%; max-width: 100%;" class="contents">
     <h1>Open Source</h1><br>
     <p>
         Do you want to contribute and help? Or do you want transparency and look into the code? This project is open source!
@@ -98,6 +98,7 @@
             checkScroll();
 
             if (window.pageYOffset > 283 && window.innerWidth > 720) {
+                $(".homepageimage").css("marginTop", "43px");
                 $("#shortlinkdiv").css({
                     position: "fixed",
                     top: "3.3px",
@@ -108,6 +109,7 @@
                     zIndex: "10001"
                 });
             } else {
+                $(".homepageimage").css("marginTop", "");
                 $("#shortlinkdiv").css({
                     position: "",
                     top: "",
@@ -117,6 +119,12 @@
                     boxShadow: "",
                     zIndex: "10001"
                 });
+            }
+
+            if (window.pageYOffset > scrollPageYOffsetMin) {
+                $("#logo img").attr("src", "/assets/images/icons/icon.svg");
+            } else {
+                $("#logo img").attr("src", "/assets/images/icons/light-icon.svg");
             }
         };
         
@@ -177,6 +185,8 @@
         padding-left: 13px;
         padding-right: 13px;
     }
+
+   
 
     .nav_not_scrolled a,
     .nav_not_scrolled a:link,

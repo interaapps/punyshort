@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" type="image/png" href="/assets/images/icons/icon.png"> <meta name="theme-color" content="#333344" />
     <title>{{$title}}</title>
 
     <script src="/assets/js/app.js"></script>
@@ -17,7 +18,7 @@
 </head>
 <body>
     <div id="nav">
-        <a id="logo" href="/">PunyShort</a>
+        <a id="logo" href="/"><img src="/assets/images/icons/icon.svg"><span>PunyShort</span></a>
         <div id="navmenu">
             <a href="/docs/v2">Developer API</a>
             <a href="/dashboard">{{ app\classes\user\IaAuth::loggedIn() ? "Dashboard" : "Login" }}</a>

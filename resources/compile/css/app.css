@@ -99,6 +99,16 @@ p {
     font-size: 18px;
 }
 
+#logo img {
+    height: 30px;
+    vertical-align: middle;
+    margin-right: 14px;
+}
+
+#logo span {
+    vertical-align: middle;
+}
+
 #navmenu {
     float: right;
 }
@@ -283,7 +293,25 @@ p {
     border: 2px solid #4542f4;
 }
 
+body {
+    background: url(/assets/images/background.svg);
+    background-position-x: 0%;
+    background-position-y: 0%;
+    background-repeat: repeat;
+    background-size: auto;
+    background-position-x: 0%;
+    background-position-y: 0%;
+    background-size: auto;
+    background-repeat: repeat-y;
+    background-position: top;
+    background-size: inherit;
+    background-size: cover;
+}
 
+#dashboardsidenav {
+    background: #FFFFFF;
+}
+    
 @media screen and (max-width: 720px) {
 
     #footer_inner {
