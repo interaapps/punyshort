@@ -83,12 +83,20 @@ $router->middleware("!\app\Middlewares@loggedIn", "!auth\AuthController@redirect
             return [];
         }));
 
-        DataTableController::addDataTable("ownlinks", (new DataTable(\databases\ShortlinksTable::class, [
-            "id", "domain", "name", "link", "created"
-        ]))->setExtraDataFunction(function($key, $value, $options){
+        $dataTable = (new DataTable(\databases\ShortlinksTable::class, [
+            "shortlinks.id", "shortlinks.domain", "shortlinks.name", "shortlinks.link", "shortlinks.created"
+        ]));
+
+        DataTableController::addDataTable("ownlinks", $dataTable->setExtraDataFunction(function($key, $value, $options){
             return [];
-        })->customQuery(function($query){
+        })->customBeforeSearchQuery(function($query){
+            $query->query = "SELECT shortlinks.*, COUNT(linkid) AS clicks FROM shortlinks LEFT JOIN clicks ON shortlinks.id = clicks.linkid ";
+        })->customQuery(function($query) use ($dataTable) {
             $query->andwhere("userid", \app\classes\user\User::$user->id);
+            
+            $dataTable->rows = ["id", "domain", "name", "link", "created", "clicks"];
+
+            $query->query .=" GROUP BY shortlinks.id ";
         }));
     });
 });

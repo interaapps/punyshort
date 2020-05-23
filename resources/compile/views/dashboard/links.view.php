@@ -11,7 +11,7 @@
 
 <script>
     let outerDataTable;
-    createDataTable($("#ownlinks"), ["id", "domain", "name", "link", "created"], "ownlinks", function (dataTable) {
+    createDataTable($("#ownlinks"), ["id", "domain", "name", "link", "clicks", "created"], "ownlinks", function (dataTable) {
 
         dataTable.options.limit = 20;
         dataTable.buttons = function (data, element) {
@@ -145,5 +145,15 @@
             addLinkAlert.open();
         });
 </script>
+
+<style>
+   .datatable-value-td-clicks {
+        text-align: center;
+   }
+
+   .datatable-value-td-created {
+        text-align: center;
+   }
+</style>
 
 @template(("footer"))!

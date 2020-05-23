@@ -40,6 +40,8 @@ class DataTableController {
                 ->count();
 
 
+            self::$dataTables[$_GET["table"]]->getBeforeSearchQuery()($query);
+
 
             $alreadyLike = false;
 
@@ -64,18 +66,21 @@ class DataTableController {
             $countQuery->query .= " ) ";
 
 
-            if (!in_array($_GET["sortBy"], self::$dataTables[$_GET["table"]]->rows))
-                $_GET["sortBy"] = self::$dataTables[$_GET["table"]]->rows[0];
-
             self::$dataTables[$_GET["table"]]->getCustomQuery()($query);
             self::$dataTables[$_GET["table"]]->getCustomQuery()($countQuery);
 
-            $query->order($_GET["sortBy"].($_GET["sortDesc"]=="true" ? " DESC " : ""));
+            if (!in_array($_GET["sortBy"], self::$dataTables[$_GET["table"]]->rows))
+                $_GET["sortBy"] = self::$dataTables[$_GET["table"]]->rows[0];
 
+
+            $query->order($_GET["sortBy"].($_GET["sortDesc"]=="true" ? " DESC " : ""));
+            
             $query->limit($_GET["limit"]);
             if ($_GET["page"] > 0)
                 $query->query .= " OFFSET ".($_GET["page"]*$_GET["limit"]);
 
+
+            
 
             $data = $query->get();
 
@@ -96,6 +101,7 @@ class DataTableController {
                 if (!$options->delete)
                     array_push($out, ["values"=>$values, "extra"=>$extraData]);
             }
+
 
             return [
                 "count"=>$countQuery->get(),

@@ -61,7 +61,7 @@ class DataTable {
                     rowData.value = parsed.data[column].values[this.databaseRows[databaseRow]];
                     this.render(rowData);
                     tr.append(
-                        rowData.htmlEncode ? $n("td").text(rowData.value) : $n("td").html(rowData.value)
+                        (rowData.htmlEncode ? $n("td").text(rowData.value) : $n("td").html(rowData.value)).addClass("datatable-value-td-"+rowData.key)
                     );
                 }
 
@@ -100,6 +100,7 @@ class DataTable {
             let _this = this;
             this.thead.append($n("th")
                 .text(this.databaseRows[databaseRow])
+                .addClass("datatable-key-td-"+this.databaseRows[databaseRow])
                 .click(function(){
                     _this.options.sortBy = _this.databaseRows[databaseRow];
                     _this.load();

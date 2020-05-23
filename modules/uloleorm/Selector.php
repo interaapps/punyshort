@@ -45,7 +45,7 @@ class Selector {
     }
 
     function like($sel1, $sel2=null) {
-        $this->query .= ' '.( !$this->alreadyUsedLike ? "WHERE" : "" ).' `'.$this->escapeString($sel1).'` LIKE "'.$this->escapeString($sel2).'"';
+        $this->query .= ' '.( !$this->alreadyUsedLike ? "WHERE" : "" ).' '.$this->escapeString($sel1).' LIKE "'.$this->escapeString($sel2).'"';
         $this->alreadyUsedLike = true;
         return $this;
     }

@@ -5,8 +5,9 @@
 
 <div class="contents">
     <h1><?php echo ($domain); ?>/<?php echo htmlspecialchars($name); ?> · ID: <?php echo htmlspecialchars($id); ?></h1>
-    <p>PunyshortLink: <a href="/<?php echo htmlspecialchars($name); ?>">pnsh.ga/<?php echo htmlspecialchars($name); ?></a><br>
-    Real: <a href="<?php echo htmlspecialchars($link); ?>"><?php echo htmlspecialchars($link); ?></a></p>
+    <p>PunyshortLink: <a href="https://<?php echo ($domain); ?>/<?php echo htmlspecialchars($name); ?>"><?php echo ($domain); ?>/<?php echo htmlspecialchars($name); ?></a><br>
+    Real: <a href="<?php echo htmlspecialchars($link); ?>"><?php echo htmlspecialchars($link); ?></a><br>
+    Total Clicks: <span id="total-clicks">0</span><br></p>
 
     <h4>Clicks</h4>
     <canvas id="clicks_chart" width="400" height="175"></canvas>
@@ -79,6 +80,8 @@ $(document).ready(function(){
         domain: "<?php echo ($domain); ?>"
     }).then(function(response){
         const parsed = JSON.parse(response.responseText);
+        $("#total-clicks").text(parsed.clicks);
+
 
         createChart("clicks_chart", "Clicks", parsed.click);
 

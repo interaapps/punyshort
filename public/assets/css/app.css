@@ -468,8 +468,11 @@ body {
 }
 
 .datatable .dt-table td {
-    padding: 4px 0px;
+    padding: 4px;
     white-space: nowrap;
+
+    max-width: 100px;
+    overflow: hidden;
 }
 
 .datatable .dt-table td.dt-buttons {

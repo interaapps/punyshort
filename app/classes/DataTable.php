@@ -7,15 +7,18 @@ use modules\uloleorm\Select;
 
 class DataTable {
     public $rows = [];
+    public $queryRows = null;
     private $table;
     private $extraRowDataFunction;
     private $customQuery;
+    private $customBeforeSearchQuery;
 
     public function __construct($reflection, $rows) {
         $this->table = new \ReflectionClass($reflection);
         $this->rows = $rows;
         $this->extraRowDataFunction = function($key, $data){return [];};
         $this->customQuery = function ($select){};
+        $this->customBeforeSearchQuery = function ($select){};
     }
 
     /**
@@ -34,6 +37,15 @@ class DataTable {
 
     public function getCustomQuery(): \Closure{
         return $this->customQuery;
+    }
+
+    public function customBeforeSearchQuery(\Closure $func){
+        $this->customBeforeSearchQuery = $func;
+        return $this;
+    }
+
+    public function getBeforeSearchQuery(): \Closure{
+        return $this->customBeforeSearchQuery;
     }
 
     public function getExtraRowDataFunction(): \Closure {

@@ -5,8 +5,9 @@
 
 <div class="contents">
     <h1>{{$domain}}/{[{$name}]} · ID: {[{$id}]}</h1>
-    <p>PunyshortLink: <a href="/{[{$name}]}">pnsh.ga/{[{$name}]}</a><br>
-    Real: <a href="{[{$link}]}">{[{$link}]}</a></p>
+    <p>PunyshortLink: <a href="https://{{$domain}}/{[{$name}]}">{{$domain}}/{[{$name}]}</a><br>
+    Real: <a href="{[{$link}]}">{[{$link}]}</a><br>
+    Total Clicks: <span id="total-clicks">0</span><br></p>
 
     <h4>Clicks</h4>
     <canvas id="clicks_chart" width="400" height="175"></canvas>
@@ -79,6 +80,8 @@ $(document).ready(function(){
         domain: "{{$domain}}"
     }).then(function(response){
         const parsed = JSON.parse(response.responseText);
+        $("#total-clicks").text(parsed.clicks);
+
 
         createChart("clicks_chart", "Clicks", parsed.click);
 

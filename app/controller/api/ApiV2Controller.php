@@ -33,7 +33,7 @@ class ApiV2Controller
             $domainName = "";
         } 
 
-        $customDomain = $domain["domain_name"] !== null && $domain["domain_name"] == $domainName && $domain["is_default"] == "0" && isset($_POST["name"]) && \trim($_POST["name"]) != "" && preg_match('#^[A-Za-z0-9_]+$#', $_POST["name"]);
+        $customDomain = $domain["domain_name"] !== null && $domain["domain_name"] == $domainName && $domain["is_default"] == "0" && isset($_POST["name"]) && \trim($_POST["name"]) != "" && preg_match('#^[A-Za-z0-9_/]+$#', $_POST["name"]);
 
         if (trim($link) != "") {
             if (Str::contains("://", $link)) {

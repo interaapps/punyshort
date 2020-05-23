@@ -5,6 +5,8 @@
             <a href="https://interaapps.de/imprint">Impressum</a>
             <a class="noSelection footerseparator">-</a>
             <a href="https://interaapps.de/dsgvo">Datenschutz</a>
+            <a class="noSelection footerseparator">-</a>
+            <a href="https://go.interaapps.de/donate/pnsh">Donate</a>
             
             <a class="noSelection" id="copyright">InteraApps 2018 - {{date('Y')}}</a>
         </div>
