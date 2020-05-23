@@ -6,6 +6,7 @@ class DomainRequestsTable extends Table {
 
     public $id,
            $domain_name,
+           $userid,
            $is_public,
            $code,
            $created;

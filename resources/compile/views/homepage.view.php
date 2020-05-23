@@ -22,22 +22,46 @@
 
 </div>
 
-<br><br><br><br>
-
-<div class="contents">
-    <h1>What is punyshort?</h1>
-    <p>
-        PunyShort is an open source Linkshortener, with which can short huge links in to a tiny one!<br>   
-        You want to track the clicks on the link? No problem! It is also possible. 
-        You can track non-user-related data like the country, browser and the time with which/when the user clicked on the link!
-    </p>
+<div class="sectioned-part" id="whats-punyshort">
+    <div>
+        <h1>What is punyshort?</h1>
+        <p>
+            PunyShort is an open source Linkshortener, with which can short huge links in to a tiny one!<br>   
+            You want to track the clicks on the link? No problem! It is also possible. 
+            You can track non-user-related data like the country, browser and the time with which/when the user clicked on the link!
+        </p>
+    </div>
+    <img id="top-what-is-punyshort-image" src="/assets/images/illustrations/linkshortener.svg">
 </div>
-<div style="text-align: center; margin-top: 40px; background: #1a1e27EE; color: #FFFFFF; padding: 70px 0px; width: 100%; max-width: 100%;" class="contents">
+
+
+
+<div style="width: 100%; background: #1a1e27EE; padding: 20px 0px;">
+    <h1 style="text-align: center; color: #FFFFFF; display: block; margin: 30px 0px;">Features</h1>
+    <div id="features-list">
+        <div style="margin-top: 45px;">
+            <img src="/assets/images/illustrations/domains.svg">
+            <h5>Custom Brand URLs</h5>
+            <span>Use your own domain to create custom shorten urls like go.interaapps.de/donate</span>
+        </div>
+        <div>
+            <img src="/assets/images/illustrations/stats.svg">
+            <h5>Statistics</h5>
+            <span>Track the non-user-specific data like the date when he visited, the browser, the estimated country and operating system.</span>
+        </div>
+        <div style="margin-top: 15px;">
+            <img src="/assets/images/illustrations/socialgrowth.svg">
+            <h5>Share</h5>
+            <span>Share it on social media and get better results. People do more often click on shorten links.</span>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 40px; padding: 70px 0px; width: 100%; max-width: 100%;" class="contents">
     <h1>Open Source</h1><br>
     <p>
         Do you want to contribute and help? Or do you want transparency and look into the code? This project is open source!
         <br>If you want to contribute stuff, than you should check out <a href="https://github.com/interaapps/punyshort">Our GitHub page</a>. 
-        <br>You can also put PunyShort on your Server and short links with it. 
     </p>
 </div>
 <!--
@@ -202,6 +226,79 @@
         border-radius: 10px;
         margin: 0px auto;
         box-sizing: border-box;
+    }
+
+    .sectioned-part {
+        display: flex;
+        width: 80%;
+        margin: 120px auto;
+    }
+
+    .sectioned-part img {
+        width: 350px;
+        max-width: 30%;
+        margin-right: 40px;
+    }
+
+    #top-what-is-punyshort-image {
+        width: 350px;
+    }
+
+    #whats-punyshort div {
+        padding-top: 100px;
+    }
+
+    #features-list {
+        display: flex;
+        width: fit-content;
+        margin: auto;
+    }
+
+    #features-list div {
+        display: block;
+        margin: 0px 30px;
+        text-align: center;
+        color: #FFFFFF;
+        text-decoration: none;
+        padding: 10px 20px;
+        width: 200px;
+    }
+
+    #features-list div img {
+        display: block;
+        width: 200px;
+        margin-bottom: 40px;
+    }
+
+    #features-list div span {
+        font-size: 20px;
+    }
+
+    #features-list div h5 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #FFFFFFDD;
+    }
+
+    @media screen and (max-width: 720px) {
+        #features-list {
+            display: block;
+        }
+
+        #features-list div {
+            display: block;
+            margin: 30px 0px;
+            width: 90%;
+        }
+
+        #features-list div img {
+            margin: auto;
+            width: 65%;
+        }
+
+        #top-what-is-punyshort-image {
+            display: none;
+        }
     }
 
 </style>

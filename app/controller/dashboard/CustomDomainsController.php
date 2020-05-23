@@ -1,12 +1,14 @@
 <?php
 namespace app\controller\Dashboard;
 
+use \app\classes\user\User;
+
 class CustomDomainsController
 {
 
     public static function page() {
         return view("dashboard/domains", [
-            "user"=>\app\classes\user\User::$user
+            "user"=>User::$user
         ]);
     }
 
@@ -14,7 +16,7 @@ class CustomDomainsController
         if (USER_LOGGEDIN) {
             $out = [];
             
-            foreach ((new \databases\DomainUsersTable)->select("domainid")->where("userid", \app\classes\user\User::$user->id)->get() as $domainUser ) {
+            foreach ((new \databases\DomainUsersTable)->select("domainid")->where("userid", User::$user->id)->get() as $domainUser ) {
                 array_push($out, [
                     "customUrl"=>true,
                     "domain"=>(new \databases\DomainsTable)->select("domain_name")->where("id", $domainUser["domainid"])->first()["domain_name"]
@@ -34,5 +36,26 @@ class CustomDomainsController
         return [];
     }
 
+/*
+    public static function requestDomain(){
+        $out = [
+            "done"=>false
+        ];
 
+        if (isset($_POST["domain"]) && (new \databases\DomainRequestsTable)->count()->where("domain_name", $_POST["domain"])->andwhere("userid", User::$user->id)->get() == 0) {
+            $domainRequest = new \databases\DomainRequestsTable;
+            $domainRequest->save();
+        }
+
+        return $out;
+    }
+
+    public static function checkDomain(){
+        $out = [
+            "done"=>false
+        ];
+
+        return $out;
+    }
+*/
 }
