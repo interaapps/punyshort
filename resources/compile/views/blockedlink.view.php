@@ -1,7 +1,6 @@
 @template(("header", ["title"=>"Welcome"]))!
 
 <br><br><br><br>
-<script data-ad-client="ca-pub-7136454966632869" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <div class="contents">
     <h1>Stop!</h1>
     <p>This links redirection has been blocked by our Team, because of one of this reasons:</p>
