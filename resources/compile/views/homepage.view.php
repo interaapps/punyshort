@@ -185,7 +185,7 @@
         });
 
         $("#outputlinkstats").click(function() {
-            window.location = "/info/"+link.link;
+            window.location = link.full_link+"/info";
         });
     });
 </script>
