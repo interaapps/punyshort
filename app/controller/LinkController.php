@@ -73,7 +73,7 @@ class LinkController {
                     ->andwhere("domain", $domainName)
                     ->first();
 
-        if ($link["id"] !== null && $domainName != "") {
+        if (isset($link["id"]) && $domainName != "") {
             view("linkinfo", [
                 "id"=>$link["id"],
                 "link"=>$link["link"],

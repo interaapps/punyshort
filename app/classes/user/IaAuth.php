@@ -88,7 +88,7 @@ class IaAuth {
                         ->select('*')
                         ->where("session_id", $_COOKIE["InteraApps_auth"])
                         ->first();   
-        return $loggedIn["id"] !== null;
+        return isset($loggedIn["id"]);
     }
     
     

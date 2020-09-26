@@ -22,7 +22,7 @@
                         background: "rgb(43, 202, 170)",
                         padding: "4px 14px",
                         marginRight: "5px"
-                    }).attr("target", "_blank").attr("href", "/info/"+data.values.name+"?domain="+data.values.domain))
+                    }).attr("href", "/info/"+data.values.name+"?domain="+data.values.domain))
                 .append($n("a").addClass("button")
                     .text("edit")
                     .css({

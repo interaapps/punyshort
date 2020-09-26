@@ -2,27 +2,33 @@
 <br><br><br><br>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>
+@if((app\classes\user\IaAuth::loggedIn()))#
+<div id="dashboard">
+    @template(("dashboard/navigation"))!
+@endif
 
-<div class="contents">
-    <h1>{{$domain}}/{[{$name}]} · ID: {[{$id}]}</h1>
-    <p>PunyshortLink: <a href="https://{{$domain}}/{[{$name}]}">{{$domain}}/{[{$name}]}</a><br>
-    Real: <a href="{[{$link}]}">{[{$link}]}</a><br>
-    Total Clicks: <span id="total-clicks">0</span><br></p>
+    <div class="contents">
+        <h1>{{$domain}}/{[{$name}]} · ID: {[{$id}]}</h1>
+        <p>PunyshortLink: <a href="https://{{$domain}}/{[{$name}]}">{{$domain}}/{[{$name}]}</a><br>
+        Real: <a href="{[{$link}]}">{[{$link}]}</a><br>
+        Total Clicks: <span id="total-clicks">0</span><br></p>
 
-    <h4>Clicks</h4>
-    <canvas id="clicks_chart" width="400" height="175"></canvas>
+        <h4>Clicks</h4>
+        <canvas id="clicks_chart" width="400" height="175"></canvas>
 
-    <h4>Countries</h4>
-    <canvas id="country_chart" width="400" height="175"></canvas>
+        <h4>Countries</h4>
+        <canvas id="country_chart" width="400" height="175"></canvas>
 
-    <h4>Operating Systems</h4>
-    <canvas id="os_chart" width="400" height="175"></canvas>
+        <h4>Operating Systems</h4>
+        <canvas id="os_chart" width="400" height="175"></canvas>
 
-    <h4>Browser</h4>
-    <canvas id="browser_chart" width="400" height="175"></canvas>
+        <h4>Browser</h4>
+        <canvas id="browser_chart" width="400" height="175"></canvas>
+    </div>
 
+@if((app\classes\user\IaAuth::loggedIn()))#
 </div>
-
+@endif
 
 
 <br><br><br><br><br><br><br><br>
