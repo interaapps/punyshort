@@ -9,7 +9,7 @@ class Link {
 
     public $link,
            $name = null,
-           $domainName = "",
+           $domainName = "pnsh.ga",
            $user = null,
            $id;
 
@@ -24,6 +24,7 @@ class Link {
         $link = (new ShortlinksTable)
                 ->select('*')
                 ->where("name", $this->name)
+                ->andwhere("domain", $this->domainName)
                 ->first();
 
         if ($link["id"] == null) {
