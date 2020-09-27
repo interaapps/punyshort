@@ -68,7 +68,7 @@ class LinkController {
         } 
 
         $link = (new ShortlinksTable)
-                    ->select("link, name, id, blocked")
+                    ->select("link, name, id, blocked, created, userid")
                     ->where("name", $_ROUTEVAR[1])
                     ->andwhere("domain", $domainName)
                     ->first();
@@ -78,7 +78,9 @@ class LinkController {
                 "id"=>$link["id"],
                 "link"=>$link["link"],
                 "domain"=>$domainName,
-                "name"=>$link["name"]
+                "name"=>$link["name"],
+                "created"=>$link["created"],
+                "userid"=>$link["userid"]
             ]);
         } else 
             view("404");

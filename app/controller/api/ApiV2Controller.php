@@ -104,6 +104,11 @@ class ApiV2Controller
         } 
             
         $out = [
+            "id"=>-1,
+            "link"=>"",
+            "url"=>"",
+            "domain"=>"",
+            "created"=>"0000-00-00 00:00:00",
             "clicks"=>[],
             "click"=>[],
             "browser"=>[],
@@ -123,10 +128,30 @@ class ApiV2Controller
                         ->where("name", $_ROUTEVAR[1])
                         ->andwhere("domain", $domainName)
                         ->first();
+            $out["id"] = $link["id"];
+            $out["link"] = $link["link"];
+            $out["url"] = $link["name"];
+            $out["domain"] = $link["domain"];
+            $out["created"] = $link["created"];
         }
         if ($link["id"] != null) {
             $out["clicks"] = StatsHandler::getClicks($link["id"]);
             $out["click"] = [
+                date('Y-m-d',date(strtotime("-24 day")))=>StatsHandler::getDayClicks(24, $link["id"]),
+                date('Y-m-d',date(strtotime("-23 day")))=>StatsHandler::getDayClicks(23, $link["id"]),
+                date('Y-m-d',date(strtotime("-22 day")))=>StatsHandler::getDayClicks(22, $link["id"]),
+                date('Y-m-d',date(strtotime("-21 day")))=>StatsHandler::getDayClicks(21, $link["id"]),
+                date('Y-m-d',date(strtotime("-20 day")))=>StatsHandler::getDayClicks(20, $link["id"]),
+                date('Y-m-d',date(strtotime("-19 day")))=>StatsHandler::getDayClicks(19, $link["id"]),
+                date('Y-m-d',date(strtotime("-18 day")))=>StatsHandler::getDayClicks(18, $link["id"]),
+                date('Y-m-d',date(strtotime("-17 day")))=>StatsHandler::getDayClicks(17, $link["id"]),
+                date('Y-m-d',date(strtotime("-16 day")))=>StatsHandler::getDayClicks(16, $link["id"]),
+                date('Y-m-d',date(strtotime("-15 day")))=>StatsHandler::getDayClicks(15, $link["id"]),
+                date('Y-m-d',date(strtotime("-14 day")))=>StatsHandler::getDayClicks(14, $link["id"]),
+                date('Y-m-d',date(strtotime("-13 day")))=>StatsHandler::getDayClicks(13, $link["id"]),
+                date('Y-m-d',date(strtotime("-12 day")))=>StatsHandler::getDayClicks(12, $link["id"]),
+                date('Y-m-d',date(strtotime("-11 day")))=>StatsHandler::getDayClicks(11, $link["id"]),
+                date('Y-m-d',date(strtotime("-10 day")))=>StatsHandler::getDayClicks(10, $link["id"]),
                 date('Y-m-d',date(strtotime("-9 day")))=>StatsHandler::getDayClicks(9, $link["id"]),
                 date('Y-m-d',date(strtotime("-8 day")))=>StatsHandler::getDayClicks(8, $link["id"]),
                 date('Y-m-d',date(strtotime("-7 day")))=>StatsHandler::getDayClicks(7, $link["id"]),

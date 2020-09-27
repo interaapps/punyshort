@@ -30,49 +30,7 @@
                         padding: "4px 14px"
                     })
                     .click(() => {
-                        var editLinkAlert = new Alert({
-                            canexit: true,
-                            closebtn: true,
-                            title: "Add new link"
-                        });
-
-                        const linkInput = $n("input").attr("type", "text").addClass("flatInput").val(data.values.link).attr("placeholder", "Link");
-                        const customUrlInput = $n("input").attr("type", "text").val(data.values.name).addClass("flatInput").attr("readonly", "");
-                        const domainsInput = $n("input").attr("type", "text").val(data.values.domain).addClass("flatInput").attr("readonly", "");
-
-                        editLinkAlert.addHtml(linkInput)
-                            .addHtml(domainsInput)
-                            .addHtml(customUrlInput);
-
-                        editLinkAlert.addButton("EDIT", function () {
-                            Cajax.post("/dashboard/link/"+data.values.id+"/edit", {
-                                link: linkInput.val()
-                            }).then(function(res){
-                                const parsed = JSON.parse(res.responseText);
-                                if (parsed.done) {
-                                    showSnackBar("Done");
-                                    editLinkAlert.close();
-                                    dataTable.load();
-                                } else {
-                                    showSnackBar("Error: "+parsed.error);
-                                }
-                            }).send();
-                        });
-
-                        editLinkAlert.addButton("DELETE", function () {
-                            Cajax.delete("/dashboard/link/"+data.values.id+"/delete").then(function(res){
-                                const parsed = JSON.parse(res.responseText);
-                                if (parsed.done) {
-                                    showSnackBar("Done");
-                                    editLinkAlert.close();
-                                    dataTable.load();
-                                } else {
-                                    showSnackBar("Error: "+parsed.error);
-                                }
-                            }).send();
-                        });
-
-                        editLinkAlert.open();
+                        editLink(data.values.id, data.values.link, data.values.name, data.values.domain, function(){dataTable.load()})
                     }));
         };
 

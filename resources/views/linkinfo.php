@@ -1,31 +1,51 @@
 <?php tmpl("header", ["title"=>"Welcome"]); ?>
 <br><br><br><br>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>
-<?php if(app\classes\user\IaAuth::loggedIn()):?>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.2/Chart.bundle.js"></script>
+<?php if(app\classes\user\IaAuth::loggedIn() && \app\classes\user\User::$user->id == $userid):?>
 <div id="dashboard">
     <?php tmpl("dashboard/navigation"); ?>
 <?php endif; ?>
+
     <div class="contents">
+        <?php if(app\classes\user\IaAuth::loggedIn() && \app\classes\user\User::$user->id == $userid):?>
+            <a style="float: right" id="edit-btn" class="button">Edit</a>
+        <?php endif; ?>
         <h1><?php echo ($domain); ?>/<?php echo htmlspecialchars($name); ?> · ID: <?php echo htmlspecialchars($id); ?></h1>
-        <p>PunyshortLink: <a href="https://<?php echo ($domain); ?>/<?php echo htmlspecialchars($name); ?>"><?php echo ($domain); ?>/<?php echo htmlspecialchars($name); ?></a><br>
-        Real: <a href="<?php echo htmlspecialchars($link); ?>"><?php echo htmlspecialchars($link); ?></a><br>
-        Total Clicks: <span id="total-clicks">0</span><br></p>
+        <p>
+            Created: <?php echo ($created); ?><br>
+            PunyshortLink: <a href="https://<?php echo ($domain); ?>/<?php echo htmlspecialchars($name); ?>"><?php echo ($domain); ?>/<?php echo htmlspecialchars($name); ?></a><br>
+            Real (Hover for full link):<br> <a  href="<?php echo htmlspecialchars($link); ?>" id="real-clicks"><?php echo htmlspecialchars($link); ?></a><br>
 
-        <h4>Clicks</h4>
-        <canvas id="clicks_chart" width="400" height="175"></canvas>
+        </p>
 
-        <h4>Countries</h4>
-        <canvas id="country_chart" width="400" height="175"></canvas>
 
-        <h4>Operating Systems</h4>
-        <canvas id="os_chart" width="400" height="175"></canvas>
+        <h3>Clicks | Total: <span id="total-clicks">0</span></h3>
+        <canvas id="clicks_chart" width="400" height="200"></canvas>
+        <div class="dual-charts">
+            <div>
+                <h3>Countries</h3>
+                <canvas id="country_chart" width="400" height="300"></canvas>
+            </div>
+        </div>
 
-        <h4>Browser</h4>
-        <canvas id="browser_chart" width="400" height="175"></canvas>
+        <div class="dual-charts">
+            <div>
+                <h3>Operating Systems</h3>
+                <canvas id="os_chart" width="400" height="300"></canvas>
+            </div>
+            <div>
+                <h3>Browser</h3>
+                <canvas id="browser_chart" width="400" height="300"></canvas>
+            </div>
+        </div>
+        <br><br>
+        <br><br>
+        <h3>QR-Code</h3>
+        <img src="https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=<?php echo (urlencode("https://".$domain."/".$name)); ?>&chld=L|1&choe=UTF-8" alt="">
     </div>
 
-<?php if(app\classes\user\IaAuth::loggedIn()):?>
+<?php if(app\classes\user\IaAuth::loggedIn() && \app\classes\user\User::$user->id == $userid):?>
 </div>
 <?php endif; ?>
 
@@ -33,7 +53,7 @@
 <br><br><br><br><br><br><br><br>
 
 <script>
-function createChart(div, label, data, type="line"){
+function createChart(div, label, data, type="line", options = {}){
 
     var labels = [];
     var outData = [];
@@ -46,9 +66,13 @@ function createChart(div, label, data, type="line"){
     var ctx = document.getElementById(div).getContext('2d');
     var myChart = new Chart(ctx, {
     type: type,
+    options: {
+        responsive: true,
+        
+    },
     data: {
         labels: labels,
-        datasets: [{
+        datasets: [{...({
             label: label,
             data: outData,
             backgroundColor: [
@@ -73,8 +97,8 @@ function createChart(div, label, data, type="line"){
                 "#e622f0",
                 "#f02222"
             ],
-            borderWidth: 1
-        }]
+            borderWidth: 3
+        }), ...options}]
     }
     });
 }
@@ -88,7 +112,7 @@ $(document).ready(function(){
         $("#total-clicks").text(parsed.clicks);
 
 
-        createChart("clicks_chart", "Clicks", parsed.click);
+        createChart("clicks_chart", "Clicks", parsed.click, "line", {borderColor: "#FF4543", fill: false, borderWidth: 4});
 
         createChart("country_chart", "Countries", parsed.countries, "pie");
 
@@ -96,10 +120,48 @@ $(document).ready(function(){
 
         createChart("browser_chart", "Browser", parsed.browser, "pie");
 
+        $("#edit-btn").click(function(){
+            editLink(parsed.id, parsed.link, parsed.url, parsed.domain, function(){window.location = "";});
+        });
     }).send();
 
 });
 
 </script>
+
+<style>
+    .dual-charts {
+        display: flex;
+    }
+
+    .dual-charts div {
+        width: 48%;
+        padding: 1%;
+    }
+
+    #real-clicks {
+        max-width: 100%;
+        color: red;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: inline-block;
+        white-space: pre;
+    }
+
+    #real-clicks:hover {
+        white-space: break-spaces;
+    }
+
+    @media screen and (max-width: 720px) {
+        .dual-charts {
+            display: block;
+        }
+
+        .dual-charts div {
+            width: 100%;
+            padding: 0px;
+        }
+    }
+</style>
 
 <?php tmpl("footer"); ?>

@@ -349,6 +349,19 @@ body {
     #nav {
         padding: 0px 20px;
     }
+
+
+    #dashboardsidenav {
+        width: 40px;
+    }
+
+
+    #dashboardsidenav a {
+        padding-left: 10px;
+    }
+    #dashboardsidenav a span {
+        display: none;
+    }
 }
 
 
