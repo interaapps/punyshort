@@ -47,7 +47,7 @@
         <div>
             <img src="/assets/images/illustrations/stats.svg">
             <h5>Statistics</h5>
-            <span>Track the non-user-specific data like the date when he visited, the browser, the estimated country and operating system.</span>
+            <span>Track the non-user-specific data like the date when the person visited, the browser, the estimated country and operating system.</span>
         </div>
         <div style="margin-top: 15px;">
             <img src="/assets/images/illustrations/socialgrowth.svg">
