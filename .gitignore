@@ -21,6 +21,7 @@ env.php
 /uppm_target
 /vendor
 /node_modules
+/package-lock.json
 /uppm.locks.json
 /composer.lock
 
