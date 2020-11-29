@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap'),
+        url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;1,100;1,200;1,300;1,400&display=swap');
+@import './variables';
+
+* {
+    box-sizing: border-box;
+    margin: 0px;
+    padding: 0px;
+    font-family: Inter, sans-serif;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+    background: #141646;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 500;
+}
+
+.tabs {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    border-bottom: $primaryAlpha 2px solid;
+    &::-webkit-scrollbar {
+        height: 1px
+    }
+    a {
+        color: $textDefault;
+        font-size: 18px;
+        font-weight: 500;
+        padding: 9px 17px;
+        display: inline-block;
+        cursor: pointer;
+        border-radius: 6px 6px 0px 0px;
+        img, svg {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 13px;
+        }
+
+        span {
+            vertical-align: middle;
+        }
+
+        &.selected {
+            color: $primary;
+            background: $primaryAlpha;
+            border-bottom: $primary 2px solid;
+            margin-bottom: -2px;
+        }
+    }
+}
+
+.button, .button:visited {
+    color: #FFF;
+    background: linear-gradient(268.27deg, #000483 1.09%, #00036A 100.73%);
+    padding: 11px;
+    text-decoration: none;
+    margin: 3px 0px;
+    display: inline-block;
+    height: 44px;
+    vertical-align: top;
+    text-align: center;
+    width: 96px;
+    border-radius: 5.4px;
+    cursor: pointer;
+}
+
+#page {
+    color: #FFF;
+    padding-left: 347px;
+    width: 100%;
+    min-height: 100%;
+    padding-top: 45px;
+    .page-contents {
+        max-width: 1000px;
+        padding: 20px;
+        margin: auto;
+        margin-top: 20px;
+    }
+    &.sidebar-contents-hidden {
+        padding-left: 65px;
+    }
+}
+
+@media screen and (max-width: 720px) {
+    #page {
+        padding: 0px;
+        &.sidebar-contents-hidden {
+            padding-left: 0px;
+        }
+    }
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background: #00023044;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #000230;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #000230AA;
+}

@@ -1,88 +1,78 @@
 <?php
 namespace app\controller\api;
 
-use app\classes\Link;
-use app\classes\StatsHandler;
-use \app\classes\Stats;
-use databases\ShortlinksTable;
-use ulole\core\classes\Response;
-use ulole\core\classes\util\Str;
+use app\auth\IAAuth;
+use app\model\Domain;
+use app\model\DomainUser;
+use app\model\ShortenLink;
+use app\helper\StatsHelper;
+use de\interaapps\ulole\helper\Str;
+use de\interaapps\ulole\orm\UloleORM;
+use de\interaapps\ulole\router\Request;
+use de\interaapps\ulole\router\Response;
 
-class ApiV2Controller 
-{
+class ApiV2Controller {
 
-    public static function create($link) : array {
-        global $ULOLE_CONFIG_ENV;
-        $out = [
+    public static function create(Request $req, Response $res) {
+        $response = [
             "link"=>false,
             "full_link"=>false,
             "error"=>3
         ];
 
-        $domainName = $_SERVER['SERVER_NAME'];
-        if (isset($_POST["domain"]))
-            $domainName = $_POST["domain"];
+        $res->setHeader('Access-Control-Allow-Origin', '*');
+        $domainName = isset($_GET["domain"]) ? $_GET["domain"] : $_SERVER['SERVER_NAME'];
+        if ($domainName == "0.0.0.0")
+            $domainName = "pnsh.ga";
+        
+        $domain = Domain::table()->where("domain_name", $domainName)->get();
 
-        $domain = (new \databases\DomainsTable)->select("id, domain_name, is_public, is_default")->where("domain_name", $domainName)->first();
+        if ($domain !== null) {
+            if ($domain->is_public == "1" || (DomainUser::table()->where("domainid", $domain->id)->where("userid", IAAuth::getUser()->id)->count() > 0)) {
+                $domainName = $domain->domain_name;
+            }
+        }
 
-        if ($domain["id"] === null) {
-            $domainName = "";
-        } else if (USER_LOGGEDIN && (new \databases\DomainUsersTable)->count()->where("userid", \app\classes\user\User::$user->id)->andwhere("domainid", $domain["id"])->get() > 0) {
-            $domainName = $domain["domain_name"];
-        } else if ($domain["is_public"] == "0") {
-            $domainName = "";
-        } 
+        $url = $req->getParam("link") !== null ? trim($req->getParam("link")) : '';
 
-        $customDomain = $domain["domain_name"] !== null && $domain["domain_name"] == $domainName && $domain["is_default"] == "0" && isset($_POST["name"]) && \trim($_POST["name"]) != "" && preg_match('#^[A-Za-z0-9_/]+$#', $_POST["name"]);
+        if ($url != "") {
+            if (strpos($url, "://") !== false) {
+                $link = new ShortenLink;
+                $link->name = Str::random(8)->str();
 
-        if (trim($link) != "") {
-            if (Str::contains("://", $link)) {
-                $existLink = (new ShortlinksTable)
-                    ->select('*')
-                    ->where("link", $link)
-                    ->andwhere("domain", $domainName)
-                    ->first();
+                if ($domain->is_public == '0' && $req->getParam("name") !== null && trim($req->getParam("name")) != "")
+                    $link->name = $req->getParam("name");
 
-               
-
-                if ($existLink["id"] == null || $customDomain) {
-                    $newLink = new Link($link);
-
-                    if ($customDomain)
-                        $newLink->name = $_POST["name"];
-
-                    $newLink->domainName = $domainName;
-                    $newLinkLink = $newLink->create();
-                    if ($newLinkLink["done"]) {
-                        $out["link"] = $newLinkLink["link"];
-                        $out["full_link"] = "https://".$domainName."/".$newLinkLink["link"];
-                        $out["domain"] = $domainName;
-                        $out["error"] = 0;
-                    } else {
-                        $out["error"] = 3;
-                    }
+                if (ShortenLink::where("name", $link->name)->where("domain", $domainName)->count() > 0) {
+                    $response["error"] = 4;
                 } else {
-                    $out["link"] = $existLink["name"];
-                    $out["full_link"] = "https://".$domainName."/".$existLink["name"];
-                    $out["domain"] = $domainName;
-                    $out["error"] = 0;
+                
+                    $link->domain  = $domainName;
+                    $link->link    = $url;
+                    $link->userid  = 0;
+                    $link->blocked = 0;
+                    $link->ip      = $req->getRemoteAddress();
+
+                    $link->userid = IAAuth::getUser()->id;
+                    if ($link->save()) {
+                        $response["link"] = $link->name;
+                        $response["full_link"] = "https://".$domainName."/".$link->name;
+                        $response["domain"] = $domainName;
+                        $response["error"] = 0;
+                    } else {
+                        $response["error"] = 3;
+                    }
                 }
             } else
-                $out["error"] = 1;
+                $response["error"] = 1;
         } else
-            $out["error"] = 2;
+            $response["error"] = 2;
 
-        return $out;
+        return $response;
     }
 
-    public static function post() {
-        header('Access-Control-Allow-Origin: *');
-        return Response::json(self::create($_POST["link"]));
-    }
-
-    public static function getInformation() {
-        global $_ROUTEVAR;
-        header('Access-Control-Allow-Origin: *');
+    public static function getInformation(Request $req, Response $res, $link) {
+        $res->setHeader('Access-Control-Allow-Origin', '*');
 
         $domainName = $_SERVER['SERVER_NAME'];
     
@@ -93,13 +83,13 @@ class ApiV2Controller
         if (isset($_GET["domain"]))
             $domainName = $_GET["domain"];
 
-        $domain = (new \databases\DomainsTable)->select("id, domain_name, is_public")->where("domain_name", $domainName)->first();
+        $domain = Domain::table()->where("domain_name", $domainName)->get();
         
-        if ($domain["id"] === null) {
+        if ($domain === null) {
             $domainName = "";
-        } else if (USER_LOGGEDIN && (new \databases\DomainUsersTable)->count()->where("userid", \app\classes\user\User::$user->id)->andwhere("domainid", $domain["id"])->get() > 0) {
-            $domainName = $domain["domain_name"];
-        } else if ($domain["is_public"] == "0") {
+        } else if (IAAuth::loggedIn() && DomainUser::table()->where("userid", IAAuth::getUser()->id)->where("domainid", $domain->id)->count() > 0) {
+            $domainName = $domain->domain_name;
+        } else if ($domain->is_public == "0") {
             $domainName = "";
         } 
             
@@ -114,83 +104,82 @@ class ApiV2Controller
             "browser"=>[],
             "os"=>[],
             "countries"=>[],
-            "error"=>0
+            "error"=>0,
+            "is_mine"=>false
         ];
 
-        if ($_ROUTEVAR[1] == ":::MyLinks" && USER_LOGGEDIN) {
-            $link = (new ShortlinksTable)
-                        ->select('*')
-                        ->where("userid", \app\classes\user\User::$user->id)
-                        ->first();
+        if ($link == ":::MyLinks" && IAAuth::loggedIn()) {
+            $link = ShortenLink::table()
+                        ->where("userid", IAAuth::getUser()->id)
+                        ->get();
         } else {
-            $link = (new ShortlinksTable)
-                        ->select('*')
-                        ->where("name", $_ROUTEVAR[1])
-                        ->andwhere("domain", $domainName)
-                        ->first();
-            $out["id"] = $link["id"];
-            $out["link"] = $link["link"];
-            $out["url"] = $link["name"];
-            $out["domain"] = $link["domain"];
-            $out["created"] = $link["created"];
+            $link = ShortenLink::table()
+                        ->where("name", $link)
+                        ->where("domain", $domainName)
+                        ->get();
+            $out["id"] = $link->id;
+            $out["link"] = $link->link;
+            $out["url"] = $link->name;
+            $out["domain"] = $link->domain;
+            $out["created"] = $link->created;
         }
-        if ($link["id"] != null) {
-            $out["clicks"] = StatsHandler::getClicks($link["id"]);
+        if ($link != null) {
+            $out["is_mine"] = IAAuth::getUser()->id === $link->userid;
+            $out["clicks"] = StatsHelper::getClicks($link->id);
             $out["click"] = [
-                date('Y-m-d',date(strtotime("-24 day")))=>StatsHandler::getDayClicks(24, $link["id"]),
-                date('Y-m-d',date(strtotime("-23 day")))=>StatsHandler::getDayClicks(23, $link["id"]),
-                date('Y-m-d',date(strtotime("-22 day")))=>StatsHandler::getDayClicks(22, $link["id"]),
-                date('Y-m-d',date(strtotime("-21 day")))=>StatsHandler::getDayClicks(21, $link["id"]),
-                date('Y-m-d',date(strtotime("-20 day")))=>StatsHandler::getDayClicks(20, $link["id"]),
-                date('Y-m-d',date(strtotime("-19 day")))=>StatsHandler::getDayClicks(19, $link["id"]),
-                date('Y-m-d',date(strtotime("-18 day")))=>StatsHandler::getDayClicks(18, $link["id"]),
-                date('Y-m-d',date(strtotime("-17 day")))=>StatsHandler::getDayClicks(17, $link["id"]),
-                date('Y-m-d',date(strtotime("-16 day")))=>StatsHandler::getDayClicks(16, $link["id"]),
-                date('Y-m-d',date(strtotime("-15 day")))=>StatsHandler::getDayClicks(15, $link["id"]),
-                date('Y-m-d',date(strtotime("-14 day")))=>StatsHandler::getDayClicks(14, $link["id"]),
-                date('Y-m-d',date(strtotime("-13 day")))=>StatsHandler::getDayClicks(13, $link["id"]),
-                date('Y-m-d',date(strtotime("-12 day")))=>StatsHandler::getDayClicks(12, $link["id"]),
-                date('Y-m-d',date(strtotime("-11 day")))=>StatsHandler::getDayClicks(11, $link["id"]),
-                date('Y-m-d',date(strtotime("-10 day")))=>StatsHandler::getDayClicks(10, $link["id"]),
-                date('Y-m-d',date(strtotime("-9 day")))=>StatsHandler::getDayClicks(9, $link["id"]),
-                date('Y-m-d',date(strtotime("-8 day")))=>StatsHandler::getDayClicks(8, $link["id"]),
-                date('Y-m-d',date(strtotime("-7 day")))=>StatsHandler::getDayClicks(7, $link["id"]),
-                date('Y-m-d',date(strtotime("-6 day")))=>StatsHandler::getDayClicks(6, $link["id"]),
-                date('Y-m-d',date(strtotime("-5 day")))=>StatsHandler::getDayClicks(5, $link["id"]),
-                date('Y-m-d',date(strtotime("-4 day")))=>StatsHandler::getDayClicks(4, $link["id"]),
-                date('Y-m-d',date(strtotime("-3 day")))=>StatsHandler::getDayClicks(3, $link["id"]),
-                date('Y-m-d',date(strtotime("-2 day")))=>StatsHandler::getDayClicks(2, $link["id"]),
-                date('Y-m-d',date(strtotime("-1 day")))=>StatsHandler::getDayClicks(1, $link["id"]),
-                date('Y-m-d',date(strtotime("-0 day")))=>StatsHandler::getDayClicks(0, $link["id"])
+                date('Y-m-d',date(strtotime("-24 day")))=>StatsHelper::getDayClicks(24, $link->id),
+                date('Y-m-d',date(strtotime("-23 day")))=>StatsHelper::getDayClicks(23, $link->id),
+                date('Y-m-d',date(strtotime("-22 day")))=>StatsHelper::getDayClicks(22, $link->id),
+                date('Y-m-d',date(strtotime("-21 day")))=>StatsHelper::getDayClicks(21, $link->id),
+                date('Y-m-d',date(strtotime("-20 day")))=>StatsHelper::getDayClicks(20, $link->id),
+                date('Y-m-d',date(strtotime("-19 day")))=>StatsHelper::getDayClicks(19, $link->id),
+                date('Y-m-d',date(strtotime("-18 day")))=>StatsHelper::getDayClicks(18, $link->id),
+                date('Y-m-d',date(strtotime("-17 day")))=>StatsHelper::getDayClicks(17, $link->id),
+                date('Y-m-d',date(strtotime("-16 day")))=>StatsHelper::getDayClicks(16, $link->id),
+                date('Y-m-d',date(strtotime("-15 day")))=>StatsHelper::getDayClicks(15, $link->id),
+                date('Y-m-d',date(strtotime("-14 day")))=>StatsHelper::getDayClicks(14, $link->id),
+                date('Y-m-d',date(strtotime("-13 day")))=>StatsHelper::getDayClicks(13, $link->id),
+                date('Y-m-d',date(strtotime("-12 day")))=>StatsHelper::getDayClicks(12, $link->id),
+                date('Y-m-d',date(strtotime("-11 day")))=>StatsHelper::getDayClicks(11, $link->id),
+                date('Y-m-d',date(strtotime("-10 day")))=>StatsHelper::getDayClicks(10, $link->id),
+                date('Y-m-d',date(strtotime("-9 day")))=>StatsHelper::getDayClicks(9, $link->id),
+                date('Y-m-d',date(strtotime("-8 day")))=>StatsHelper::getDayClicks(8, $link->id),
+                date('Y-m-d',date(strtotime("-7 day")))=>StatsHelper::getDayClicks(7, $link->id),
+                date('Y-m-d',date(strtotime("-6 day")))=>StatsHelper::getDayClicks(6, $link->id),
+                date('Y-m-d',date(strtotime("-5 day")))=>StatsHelper::getDayClicks(5, $link->id),
+                date('Y-m-d',date(strtotime("-4 day")))=>StatsHelper::getDayClicks(4, $link->id),
+                date('Y-m-d',date(strtotime("-3 day")))=>StatsHelper::getDayClicks(3, $link->id),
+                date('Y-m-d',date(strtotime("-2 day")))=>StatsHelper::getDayClicks(2, $link->id),
+                date('Y-m-d',date(strtotime("-1 day")))=>StatsHelper::getDayClicks(1, $link->id),
+                date('Y-m-d',date(strtotime("-0 day")))=>StatsHelper::getDayClicks(0, $link->id)
             ];
 
             $out["browser"] = [
-                "Chrome"=>StatsHandler::getBrowserStats("Chrome", $link["id"]),
-                "Firefox"=>StatsHandler::getBrowserStats("Firefox", $link["id"]),
-                "Safari"=>StatsHandler::getBrowserStats("Safari", $link["id"]),
-                "Opera"=>StatsHandler::getBrowserStats("Opera", $link["id"]),
-                "Netscape"=>StatsHandler::getBrowserStats("Netscape", $link["id"]),
-                "Maxthon"=>StatsHandler::getBrowserStats("Maxthon", $link["id"]),
-                "Konqueror"=>StatsHandler::getBrowserStats("Konqueror", $link["id"]),
-                "Handheld Browser"=>StatsHandler::getBrowserStats("Handheld Browser", $link["id"]),
-                "Internet Explorer"=>StatsHandler::getBrowserStats("Internet Explorer", $link["id"]),
-                "Unknown"=>StatsHandler::getBrowserStats("Unknown", $link["id"])
+                "Chrome"=>StatsHelper::getBrowserStats("Chrome", $link->id),
+                "Firefox"=>StatsHelper::getBrowserStats("Firefox", $link->id),
+                "Safari"=>StatsHelper::getBrowserStats("Safari", $link->id),
+                "Opera"=>StatsHelper::getBrowserStats("Opera", $link->id),
+                "Netscape"=>StatsHelper::getBrowserStats("Netscape", $link->id),
+                "Maxthon"=>StatsHelper::getBrowserStats("Maxthon", $link->id),
+                "Konqueror"=>StatsHelper::getBrowserStats("Konqueror", $link->id),
+                "Handheld Browser"=>StatsHelper::getBrowserStats("Handheld Browser", $link->id),
+                "Internet Explorer"=>StatsHelper::getBrowserStats("Internet Explorer", $link->id),
+                "Unknown"=>StatsHelper::getBrowserStats("Unknown", $link->id)
             ];
 
             $out["os"] = [
-                "Windows"=>StatsHandler::getOSStats("Windows", $link["id"]),
-                "Mac OS"=>StatsHandler::getOSStats("Mac", $link["id"]),
-                "Linux"=>StatsHandler::getOSStats("Linux", $link["id"]),
-                "ios"=>StatsHandler::getOSStats("ios", $link["id"]),
-                "Android"=>StatsHandler::getOSStats("Android", $link["id"]),
-                "Other"=>StatsHandler::getOSStats("Other", $link["id"])+StatsHandler::getOSStats("Unknown OS Platform", $link["id"])
+                "Windows"=>StatsHelper::getOSStats("Windows", $link->id),
+                "Mac OS"=>StatsHelper::getOSStats("Mac", $link->id),
+                "Linux"=>StatsHelper::getOSStats("Linux", $link->id),
+                "ios"=>StatsHelper::getOSStats("ios", $link->id),
+                "Android"=>StatsHelper::getOSStats("Android", $link->id),
+                "Other"=>StatsHelper::getOSStats("Other", $link->id)+StatsHelper::getOSStats("Unknown OS Platform", $link->id)
             ];
 
-            $out["countries"] = StatsHandler::getCountryClicks($link["id"]);
+            $out["countries"] = StatsHelper::getCountryClicks($link->id);
         } else {
             $out["error"] = 404;
         }
-        return Response::json($out);
+        return $out;
     }
-
 }

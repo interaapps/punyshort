@@ -1,11 +1,29 @@
-/node_modules
-/vendor
-/tempdir
-/.idea
+/cache
+
+# ENVIRONMENT FILES
+.env
+.env.local
+.env.production
+
+config.json
 env.json
-.idea
-package-lock.json
-composer.lock
-npm-debug.log
-yarn-error.log
-temp_module.zip
+
+config.php
+env.php
+
+#IDE's
+
+/.idea
+*.iml
+
+# Dependency-managers
+/modules
+/uppm_target
+/vendor
+/node_modules
+/uppm.locks.json
+/composer.lock
+
+# testing
+/_modules
+/_vendor

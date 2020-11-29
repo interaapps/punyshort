@@ -1,99 +1,23 @@
 #!/usr/bin/env php
 <?php
-
- class Colors {
-     public const HEADER = "\033[95m",
-                  OKBLUE = "\033[94m",
-                  OKGREEN = "\033[92m",
-                  WARNING = "\033[93m",
-                  FAIL = "\033[91m",
-                  ENDC = "\033[0m",
-                  BOLD = "\033[1m",
-                  UNDERLINE = "\033[4m",
-                  RED = "\033[31m",
-                  BLUE = "\033[34m",
-                  YELLOW = "\033[33m",
-                  TURQUIOUS = "\033[36m",
-                  GREEN = "\033[32m",
-                  BLINK = "\033[5m",
-                  BG_RED = "\033[41m",
-                  BG_BLUE = "\033[44m",
-                  BG_GREEN = "\033[42m",
-                  BG_YELLOW = "\033[43m",
-                  BG_BLACK = "\033[40m";
-
-    public const PREFIX_DONE = "\033[92m᮰ Done\033[0m: ",
-                 PREFIX_WARN = "\033[93m᮰ WARNING\033[0m: ",
-                 PREFIX_ERROR = "\033[91m᮰ ERROR\033[0m: ";
- }
 /*
-    Deprecated color vars: */
-$HEADER = "\033[95m";
-$OKBLUE = "\033[94m";
-$OKGREEN = "\033[92m";
-$WARNING = "\033[93m";
-$FAIL = "\033[91m";
-$ENDC = "\033[0m";
-$BOLD = "\033[1m";
-$UNDERLINE = "\033[4m";
-$RED = "\033[31m";
-$BLUE = "\033[34m";
-$YELLOW = "\033[33m";
-$TURQUIOUS = "\033[36m";
-$GREEN = "\033[32m";
-$BLINK = "\033[5m";
-$BG_RED = "\033[41m";
-$BG_BLUE = "\033[44m";
-$BG_GREEN = "\033[42m";
-$BG_YELLOW = "\033[43m";
-$BG_BLACK = "\033[40m";
+    Ulole-Command-Line-Interface
+ */
 
-$OKTEXT = $GREEN."᮰ Done".$ENDC.": ";
-$done_prefix = "\033[92m᮰ Done\033[0m: ";
-$warn_prefix = "\033[93m᮰ WARNING\033[0m: ";
-$error_prefix = "\033[91m᮰ ERROR\033[0m: ";
+use app\App;
+use app\helper\cli\CustomCLI;
+use de\interaapps\ulole\core\cli\CLIBootstrapper;
+use de\interaapps\ulole\core\Environment;
 
-echo "\n\n    ".$BLUE."U".$GREEN."L".$TURQUIOUS."O".$RED."L".$YELLOW."E".$RED.$BOLD." CLI".$ENDC."\n\n\n";
+chdir(".");
+require_once "autoload.php";
+if (file_exists("vendor/autoload.php"))
+    require_once "vendor/autoload.php";
 
-spl_autoload_register(function($class) {
-    @include_once "./".str_replace("\\","/",$class).".php";
-});
+(new App)
+    ->setInCLI(true) // Deactivates the web stuff
+    ->start(Environment::fromCurrent());
 
-
-if ($argv[1] == "server") {
-
-    require "ulole/CLI/Server.php";
-} elseif ($argv[1] == "compile") {
-    require "ulole/CLI/Compile.php";
-    ulole\CLI\Compile::compileDir('resources/compile/css/compile.json', "resources/compile/css");
-    echo "\n".$OKTEXT."Bundled all files from config file: resources/compile/css/compile.json";
-    ulole\CLI\Compile::compileDir('resources/compile/js/compile.json', "resources/compile/js");
-    echo "\n".$OKTEXT."Bundled all files from config file: resources/compile/js/compile.json";
-    ulole\CLI\Compile::compileViews("resources/compile/views/", "resources/views/");
-    echo "\n".$OKTEXT."Compiled all view.php files in directory resources/compile/views/\n";
-} elseif ($argv[1] == "run") {
-    require "app/ulole/CustomCLI.php";
-    $CLI->run($argv[1], $argv);
-} elseif ($argv[1] == "devtest") {
-    require "ulole/CLI/DevTests.php";
-    $CLI->run($argv[1], $argv);
-} elseif ($argv[1] == "repl") {
-      echo "UloleREPL is not finished yet!\n";
-      $runRepl = true;
-      require "ulole/CLI/repl.php";
-} elseif ($argv[1] == "generate") {
-    require "ulole/CLI/Generate.php";
-    $CLI->run($argv[1], $argv);
-} elseif ($argv[1] == "migrate") {
-    require "ulole/CLI/Migrate.php";
-    $CLI->run($argv[1], $argv);
-} elseif ($argv[1] == "modules") {
-    require "ulole/CLI/Modules.php";
-    $CLI->run($argv[1], $argv);
-}
-
-
-
-else {
-    echo "\033[91m᮰ ERROR\033[0m: Function \"".$argv[1]."\" not found!\n";
-}
+(new CLIBootstrapper($argv))
+    ->register(new CustomCLI())
+    ->run();
