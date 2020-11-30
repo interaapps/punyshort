@@ -25,7 +25,6 @@
 
 <script>
 import Sidebar from './Sidebar.vue';
-import EventBus from "../EventBus";
 export default {
   data: function(){ return{
     mobile: false,
@@ -36,7 +35,6 @@ export default {
     window.addEventListener("resize", ()=>{
       this.checkMobile()
     });
-    EventBus;
   },
   methods: {
     checkMobile(){

@@ -7,9 +7,7 @@
     <link rel="stylesheet" href="/assets/css/app.compiled.css">
 </head>
 <body>
-    <div id="app">
-        <App></App>
-    </div>
+    <div id="app"></div>
     <script src="/assets/js/app.compiled.js"></script>
 </body>
 </html>

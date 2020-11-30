@@ -22,15 +22,25 @@ class ApiV2Controller {
 
         $res->setHeader('Access-Control-Allow-Origin', '*');
         $domainName = isset($_GET["domain"]) ? $_GET["domain"] : $_SERVER['SERVER_NAME'];
-        if ($domainName == "0.0.0.0")
-            $domainName = "pnsh.ga";
-        
-        $domain = Domain::table()->where("domain_name", $domainName)->get();
+        $domainName = $_SERVER['SERVER_NAME'];
 
+        if (isset($_GET["domain"]))
+            $domainName = $_GET["domain"];
+
+        $domain = Domain::table()->where("domain_name", $domainName)->get();
+        
         if ($domain !== null) {
-            if ($domain->is_public == "1" || (DomainUser::table()->where("domainid", $domain->id)->where("userid", IAAuth::getUser()->id)->count() > 0)) {
+            if (IAAuth::loggedIn() && DomainUser::table()->where("userid", IAAuth::getUser()->id)->where("domainid", $domain->id)->count() > 0) {
+                $domainName = $domain->domain_name;
+            } else if ($domain->is_public == "0") {
+                $domainName = "";
+            } else {
+                $domain = Domain::where("is_default", "1")->where("is_public", "1")->get();
                 $domainName = $domain->domain_name;
             }
+        } else {
+            $domain = Domain::where("is_default", "1")->where("is_public", "1")->get();
+            $domainName = $domain->domain_name;
         }
 
         $url = $req->getParam("link") !== null ? trim($req->getParam("link")) : '';
@@ -40,7 +50,7 @@ class ApiV2Controller {
                 $link = new ShortenLink;
                 $link->name = Str::random(8)->str();
 
-                if ($domain->is_public == '0' && $req->getParam("name") !== null && trim($req->getParam("name")) != "")
+                if ($domain !== null && $domain->is_public == '0' && $req->getParam("name") !== null && trim($req->getParam("name")) != "")
                     $link->name = $req->getParam("name");
 
                 if (ShortenLink::where("name", $link->name)->where("domain", $domainName)->count() > 0) {
@@ -53,7 +63,10 @@ class ApiV2Controller {
                     $link->blocked = 0;
                     $link->ip      = $req->getRemoteAddress();
 
-                    $link->userid = IAAuth::getUser()->id;
+                    if (IAAuth::loggedIn())
+                        $link->userid = IAAuth::getUser()->id;
+                    else 
+                        $link->userid = 0;
                     if ($link->save()) {
                         $response["link"] = $link->name;
                         $response["full_link"] = "https://".$domainName."/".$link->name;
@@ -75,23 +88,23 @@ class ApiV2Controller {
         $res->setHeader('Access-Control-Allow-Origin', '*');
 
         $domainName = $_SERVER['SERVER_NAME'];
-    
-        // TESTING PURPOSES
-        if ($domainName == "0.0.0.0")
-            $domainName = "pnsh.ga";
 
         if (isset($_GET["domain"]))
             $domainName = $_GET["domain"];
 
         $domain = Domain::table()->where("domain_name", $domainName)->get();
         
-        if ($domain === null) {
+        if ($domain !== null) {
+            if (IAAuth::loggedIn() && DomainUser::table()->where("userid", IAAuth::getUser()->id)->where("domainid", $domain->id)->count() > 0) {
+                $domainName = $domain->domain_name;
+            } else if ($domain->is_public == "0") {
+                $domainName = "";
+            } else {
+                $domainName = ShortenLink::where("is_default", "1")->where("is_public", "1")->get()->domain_name;
+            }
+        } else {
             $domainName = "";
-        } else if (IAAuth::loggedIn() && DomainUser::table()->where("userid", IAAuth::getUser()->id)->where("domainid", $domain->id)->count() > 0) {
-            $domainName = $domain->domain_name;
-        } else if ($domain->is_public == "0") {
-            $domainName = "";
-        } 
+        }
             
         $out = [
             "id"=>-1,
