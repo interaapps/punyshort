@@ -93,17 +93,19 @@ class ApiV2Controller {
             $domainName = $_GET["domain"];
 
         $domain = Domain::table()->where("domain_name", $domainName)->get();
-        
+    
         if ($domain !== null) {
             if (IAAuth::loggedIn() && DomainUser::table()->where("userid", IAAuth::getUser()->id)->where("domainid", $domain->id)->count() > 0) {
                 $domainName = $domain->domain_name;
             } else if ($domain->is_public == "0") {
                 $domainName = "";
             } else {
-                $domainName = ShortenLink::where("is_default", "1")->where("is_public", "1")->get()->domain_name;
+                $domain = Domain::where("is_default", "1")->where("is_public", "1")->get();
+                $domainName = $domain->domain_name;
             }
         } else {
-            $domainName = "";
+            $domain = Domain::where("is_default", "1")->where("is_public", "1")->get();
+            $domainName = $domain->domain_name;
         }
             
         $out = [
