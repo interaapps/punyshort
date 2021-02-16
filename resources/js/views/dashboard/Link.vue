@@ -35,7 +35,13 @@
     </table>
     <div class="chart-category">
       <div class="chart-category-list">
-        <h1>Countries</h1>
+        <h1>Countries</h1><br>
+
+        <div v-for="(count, country) of response.countries" :key="country" class="list-entry">
+          <img style="border-radius: 100%" :src="'https://cdn.interaapps.de/icon/flags/states/'+getISOCode(country)+'.svg'">
+          <span class="list-entry-name">{{country}}</span>
+          <span class="list-entry-right">{{count}}</span>
+        </div>
       </div>
       <div class="chart-category-chart">
         <canvas id="country-chart" width="50px" height="50px"></canvas>
@@ -46,12 +52,22 @@
         <canvas id="browser-chart" width="50px" height="50px"></canvas>
       </div>
       <div class="chart-category-list">
-        <h1>Browsers</h1>
+        <h1>Browsers</h1><br>
+        <div v-for="(count, browser) of response.browser" :key="browser" class="list-entry">
+          <img :src="'/assets/images/browser/'+getBrowser(browser)+'.svg'">
+          <span class="list-entry-name">{{browser}}</span>
+          <span class="list-entry-right">{{count}}</span>
+        </div>
       </div>
     </div>
     <div class="chart-category">
       <div class="chart-category-list">
-        <h1>Operating systems</h1>
+        <h1>Operating systems</h1><br>
+        <div v-for="(count, os) of response.os" :key="os" class="list-entry">
+          <img :src="'/assets/images/os/'+getOS(os)+'.svg'">
+          <span class="list-entry-name">{{os}}</span>
+          <span class="list-entry-right">{{count}}</span>
+        </div>
       </div>
       <div class="chart-category-chart">
         <canvas id="os-chart" width="50px" height="50px"></canvas>
@@ -83,7 +99,8 @@ export default {
         "error":0
       },
       editedLink: null,
-      editMenuOpened: false
+      editMenuOpened: false,
+      iso3166List: require("../../assets/data/iso3166.json")
     }
   },
   components: {
@@ -188,6 +205,36 @@ export default {
         this.load()
         this.editMenuOpened = false
       })
+    },
+    getISOCode(name){
+      for (const [code, countryName] of Object.entries(this.iso3166List)) {
+        console.log(code, countryName)
+        console.log(countryName.toLowerCase(), name.toLowerCase())
+        if (countryName.toLowerCase() == name.toLowerCase()) {
+          return  code;
+          break;
+        }
+      }
+      return "UKNWOWN";
+    },
+    getBrowser(name){
+      if (name.toLowerCase() == 'chrome'   ||
+          name.toLowerCase() == 'firefox'  ||
+          name.toLowerCase() == 'safari'   ||
+          name.toLowerCase() == 'opera'    ||
+          name.toLowerCase() == 'netscape' ||
+          name.toLowerCase() == 'maxthon' 
+        ) {
+          return name.toUpperCase()
+      } else if (name == 'Internet Explorer') {
+          return 'INTERNET-EXPLORER' 
+      } else if (name == 'Handheld Browser') {
+          return 'MOBILE' 
+      }
+      return "OTHER";
+    },
+    getOS(name){
+      return name.toUpperCase().replaceAll(" ", "")
     },
     deleteLink(){
       this.punyshortClient.delete("api/client/delete/"+this.response.id).then(()=>{
@@ -306,5 +353,61 @@ export default {
       line-height: 18px;
     }
   }
+}
+
+.list-entry {
+  padding: 10px;
+  background: #FFFFFF11;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  margin-right: 1%;
+  width: 49%;
+  display: inline-block;
+
+  img {
+    width: 21px;
+    height: 21px;
+    vertical-align: middle;
+    user-select: none;
+    margin-right: 6px;
+  }
+  .list-entry-name {
+    font-size: 19px;
+    vertical-align: middle;
+  }
+  .list-entry-right {
+    font-size: 19px;
+    float: right;
+    vertical-align: middle;
+  }
+}
+
+@media screen and (max-width: 1100px) {
+  
+  .list-entry {
+    width: 100%;
+    display: block;
+    margin-right: 0px;
+  }
+
+  #link-page {
+    .chart-category {
+      .chart-category-list {
+        display: block;
+        width: 100%;
+        margin-right: 0px;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      .chart-category-chart {
+        display: block;
+        height: 170px;
+        width:  170px;
+        margin-top: 40px;
+        margin-bottom: 40px;
+      }
+    }
+  }
+
 }
 </style>
