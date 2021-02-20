@@ -27,9 +27,12 @@ class App extends WebApplication {
         $this->getConfig()
             ->loadENVFile(".env")      
             ->loadJSONFile("env.json");
-            
-        $this->initDatabase("database");
 
+        try {
+            $this->initDatabase("database");
+        } catch (\Exception $e) {
+            die("An internal error occured. Please come back later.");
+        }
         UloleORM::register("clicks", Click::class);
         UloleORM::register("domains", Domain::class);
         UloleORM::register("domains_users", DomainUser::class);

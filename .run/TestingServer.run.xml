@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="TestingServer" type="PhpBuiltInWebServerConfigurationType" factoryName="PHP Built-in Web Server" document_root="$PROJECT_DIR$/public" port="8000" router_script="$PROJECT_DIR$/public/index.php" use_router_script="true">
+    <CommandLine workingDirectory="$PROJECT_DIR$/public" />
+    <method v="2" />
+  </configuration>
+</component>
