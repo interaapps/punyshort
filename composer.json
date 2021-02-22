@@ -5,7 +5,7 @@
         "interaapps/uloleorm": "2.0.1",
         "interaapps/ulole": "3.0.5",
         "interaapps/httprequest": "^1.0",
-      "ext-json": "*",
+        "ext-json": "*",
         "interaapps/helper": "1.0.3"
     },
     "autoload": {

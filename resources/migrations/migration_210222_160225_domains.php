@@ -13,7 +13,7 @@ class migration_210222_160225_domains implements Migration {
         return $database->create("domains", function (Blueprint $blueprint) {
             $blueprint->id();
             $blueprint->string("domain_name");
-            $blueprint->string("alias");
+            $blueprint->string("alias")->nullable(true);
             $blueprint->int("is_default")->default("0");
             $blueprint->int("is_public")->default("1");
             $blueprint->timestamp("created")->currentTimestamp();
