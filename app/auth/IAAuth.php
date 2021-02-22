@@ -1,6 +1,5 @@
 <?php
 
-
 namespace app\auth;
 
 
@@ -13,14 +12,16 @@ class IAAuth
 
     private static $cachedUsers = [];
 
-    public static function findUser($query, $limit = false) {
+    public static function findUser($query, $limit = false)
+    {
         $req = HTTPRequest::post("https://accounts.interaapps.de/iaauth/api/finduser")
             ->parameter("key", App::getInstance()->getConfig()->get("auth.ia.key"))
             ->parameter("query", json_encode($query));
         return json_decode($req->send()->getData());
     }
 
-    public static function getUserInformation($user, $t = false) {
+    public static function getUserInformation($user, $t = false)
+    {
         if (isset(self::$cachedUsers[$user]))
             return self::$cachedUsers[$user];
 
@@ -37,14 +38,16 @@ class IAAuth
             return false;
     }
 
-    public static function loggedIn() {
+    public static function loggedIn()
+    {
         if (!isset($_COOKIE["auth"])) return false;
 
         $user = Session::table()->where("session_id", $_COOKIE["auth"])->get();
         return $user !== null && IAAuth::getUserInformation($user->user_key) !== false;
     }
 
-    public static function isFriend($username){
+    public static function isFriend($username)
+    {
         $session = Session::table()
             ->where("session_id", $_COOKIE["auth"])
             ->get();
@@ -64,7 +67,8 @@ class IAAuth
     }
 
 
-    public static function getUser() {
+    public static function getUser()
+    {
         if (!isset($_COOKIE["auth"]))
             return false;
         $session = Session::table()

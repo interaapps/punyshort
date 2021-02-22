@@ -1,4 +1,5 @@
 <?php
+
 namespace app\helper\factories;
 
 
@@ -15,7 +16,7 @@ class UserFactory extends Factory
 
     protected function production(AssemblyLine $assemblyLine)
     {
-        $assemblyLine->insert(function(User $user, Faker $faker){
+        $assemblyLine->insert(function (User $user, Faker $faker) {
             $user->name = $faker->fullName();
             $user->gender = "FEMALE";
             $user->password = password_hash($faker->password(), PASSWORD_BCRYPT);

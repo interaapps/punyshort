@@ -1,31 +1,37 @@
 <?php
+
 namespace app;
 
 use app\auth\IAAuth;
+use app\model\CachedIPAddress;
 use app\model\Click;
 use app\model\Domain;
 use app\model\DomainUser;
 use app\model\Session;
 use app\model\ShortenLink;
+use de\interaapps\ulole\core\jobs\JobModel;
 use de\interaapps\ulole\orm\UloleORM;
 use de\interaapps\ulole\core\Environment;
 use de\interaapps\ulole\core\WebApplication;
 use de\interaapps\ulole\core\traits\Singleton;
 use de\interaapps\ulole\router\Request;
 
-class App extends WebApplication {
+class App extends WebApplication
+{
     private static $instance;
-    
+
     use Singleton;
 
-    public static function main(Environment $environment){    
-        self::setInstance( (new self()) );
+    public static function main(Environment $environment)
+    {
+        self::setInstance((new self()));
         self::$instance->start($environment);
     }
 
-    public function init(){
+    public function init()
+    {
         $this->getConfig()
-            ->loadENVFile(".env")      
+            ->loadENVFile(".env")
             ->loadJSONFile("env.json");
 
         try {
@@ -38,13 +44,18 @@ class App extends WebApplication {
         UloleORM::register("domains_users", DomainUser::class);
         UloleORM::register("shortlinks", ShortenLink::class);
         UloleORM::register("punyshort_sessions", Session::class);
+        UloleORM::register("cached_ip_addresses", CachedIPAddress::class);
+
+        UloleORM::register("uloleorm_jobs", JobModel::class);
+        $this->getJobHandler()->setMode($this->getConfig()->get("jobs.mode", "database"));
     }
 
-    public function run() {
+    public function run()
+    {
         $router = $this->getRouter();
 
 
-        $router->before("/(.*)", function(Request $req){
+        $router->before("/(.*)", function (Request $req) {
             $req->setAttrib("loggedIn", false);
 
             if (IAAuth::loggedIn()) {
@@ -64,7 +75,7 @@ class App extends WebApplication {
 
         $router->get("/ia/auth/user/login", "auth\\AuthController@login");
         $router->get("/user", "auth\\AuthController@getUser");
-        
+
         $router->get("/links", "app.php");
         $router->get("/links/(.*)", "app.php");
 

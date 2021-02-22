@@ -1,10 +1,9 @@
-FROM webdevops/php-apache:7.4
+FROM webdevops/php-apache:8.0
 
 COPY --chown=application . /app
 WORKDIR /app
 
 # Choose dependency manager (If you  use composer you need the 2nd one!)
-# RUN php uppm.php install
 RUN composer install
 
 ENV WEB_DOCUMENT_ROOT=/app/public

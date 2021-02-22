@@ -1,4 +1,5 @@
 <?php
+
 namespace app\controller\auth;
 
 
@@ -21,17 +22,18 @@ class AuthController
                 $session->userid = $auth->id;
                 $session->user_key = $auth->userkey;
                 if ($session->save())
-                    \setcookie("auth", $session->session_id, time()+10593600, "/");
+                    \setcookie("auth", $session->session_id, time() + 10593600, "/");
                 else
                     die("ERROR WHILE SAVING SESSION!");
                 $res->redirect('/');
                 return "";
             }
         }
-        $res->redirect("https://accounts.interaapps.de/iaauth/".App::getInstance()->getConfig()->get("auth.ia.id"));
+        $res->redirect("https://accounts.interaapps.de/iaauth/" . App::getInstance()->getConfig()->get("auth.ia.id"));
     }
 
-    public static function getUser(Request $req) {
+    public static function getUser(Request $req)
+    {
         $out = ["loggedIn" => false];
         if (IAAuth::loggedIn()) {
             $out["loggedIn"] = true;

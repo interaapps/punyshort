@@ -5,7 +5,7 @@
  */
 
 use app\App;
-use app\helper\cli\CustomCLI;
+use app\helper\cli\DomainControlCLI;
 use de\interaapps\ulole\core\cli\CLIBootstrapper;
 use de\interaapps\ulole\core\Environment;
 
@@ -14,10 +14,11 @@ require_once "autoload.php";
 if (file_exists("vendor/autoload.php"))
     require_once "vendor/autoload.php";
 
-(new App)
+$app = (new App)
     ->setInCLI(true) // Deactivates the web stuff
     ->start(Environment::fromCurrent());
 
 (new CLIBootstrapper($argv))
-    ->register(new CustomCLI())
+    ->register(new DomainControlCLI())
+    ->addFrameworkHandlers($app)
     ->run();

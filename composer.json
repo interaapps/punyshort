@@ -1,9 +1,9 @@
 {
     "name": "interaapps/punyshort",
     "require": {
-        "interaapps/deverm": "5.0.2",
+        "interaapps/deverm": "5.0.4",
         "interaapps/uloleorm": "2.0.1",
-        "interaapps/ulole": "3.0.4",
+        "interaapps/ulole": "3.0.5",
         "interaapps/httprequest": "^1.0",
       "ext-json": "*",
         "interaapps/helper": "1.0.3"

@@ -1,30 +1,35 @@
 <?php
+
 namespace app\helper;
 
+use app\model\CachedIPAddress;
 use app\model\Click;
 
-class StatsHelper {
+class StatsHelper
+{
 
-    
 
-    public static function getBrowserStats($browser, $linkId) {
+    public static function getBrowserStats($browser, $linkId)
+    {
         return Click::table()
-                    ->where("linkid", $linkId)
-                    ->where("browser", $browser)
-                    ->count();
+            ->where("linkid", $linkId)
+            ->where("browser", $browser)
+            ->count();
     }
 
-    public static function getOSStats($os, $linkId) {
+    public static function getOSStats($os, $linkId)
+    {
         return Click::table()
-                ->where("linkid", $linkId)
-                ->where("os", $os)
-                ->count();
+            ->where("linkid", $linkId)
+            ->where("os", $os)
+            ->count();
     }
 
-    public static function getCountryClicks($linkId) {
+    public static function getCountryClicks($linkId)
+    {
         $clicks = Click::table()
-                        ->where("linkid", $linkId)
-                        ->all();
+            ->where("linkid", $linkId)
+            ->all();
         $out = [];
         foreach ($clicks as $click) {
             if (!isset($out[$click->country]))
@@ -39,35 +44,39 @@ class StatsHelper {
         return $out;
     }
 
-    public static function getDayClicks($minusday, $linkId) {
-        $day = date('Y-m-d',date(strtotime("-".$minusday."day")));
+    public static function getDayClicks($minusday, $linkId)
+    {
+        $day = date('Y-m-d', date(strtotime("-" . $minusday . "day")));
         return Click::table()
-                ->where("linkid", $linkId)
-                ->where("day", $day)
-                ->count();
+            ->where("linkid", $linkId)
+            ->where("day", $day)
+            ->count();
     }
 
-    public static function getClicks($linkId) {
+    public static function getClicks($linkId)
+    {
         return Click::table()
-                ->where("linkid", $linkId)
-                ->count();
+            ->where("linkid", $linkId)
+            ->count();
     }
 
-    public static function getIP() {
+    public static function getIP()
+    {
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))  {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR']; 
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
         } else {
-            $ip = $_SERVER['REMOTE_ADDR']; 
-        } 
-        return $ip; 
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+        return $ip;
     }
-    
-    public static function getOS() {
+
+    public static function getOS()
+    {
         $user_agent = $_SERVER['HTTP_USER_AGENT'];
         $os_platform = "Other";
-        $os_array    = array(
+        $os_array = array(
             '/windows nt 6.2/i' => 'Windows',
             '/windows nt 10.0/i' => 'Windows',
             '/windows nt 6.1/i' => 'Windows',
@@ -98,9 +107,11 @@ class StatsHelper {
         }
         return $os_platform;
     }
-    public static function getBrowser(){
+
+    public static function getBrowser()
+    {
         $user_agent = $_SERVER['HTTP_USER_AGENT'];
-        $browser       = "Unknown";
+        $browser = "Unknown";
         $browser_array = array(
             '/msie/i' => 'Internet Explorer',
             '/firefox/i' => 'Firefox',
@@ -120,9 +131,22 @@ class StatsHelper {
         return $browser;
     }
 
-    public static function getCountry($ip) {
-        $data = \file_get_contents('https://www.iplocate.io/api/lookup/'.$ip);
-        return \json_decode($data)->country;
+    public static function getCountry($ip)
+    {
+        $country = "Germany";
+        $cachedCountry = CachedIPAddress::table()->where("ip_address", $ip)->all();
+        if (count($cachedCountry) > 0) {
+            $country = $cachedCountry->country;
+        } else {
+            $data = \file_get_contents('https://www.iplocate.io/api/lookup/' . $ip);
+            if (isset($data))
+                $country = \json_decode($data)->country;
+            $cachedCountry = new CachedIPAddress();
+            $cachedCountry->country = $country;
+            $cachedCountry->ip_address = $ip;
+            $cachedCountry->save();
+        }
+        return $country;
     }
 
 }
