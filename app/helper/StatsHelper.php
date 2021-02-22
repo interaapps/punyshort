@@ -136,7 +136,7 @@ class StatsHelper
         $country = "Germany";
         $cachedCountry = CachedIPAddress::table()->where("ip_address", $ip)->all();
         if (count($cachedCountry) > 0) {
-            $country = $cachedCountry->country;
+            $country = $cachedCountry[0]->country;
         } else {
             $data = \file_get_contents('https://www.iplocate.io/api/lookup/' . $ip);
             if (isset($data))
