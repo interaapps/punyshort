@@ -14,24 +14,44 @@ class IAAuth
 
     public static function findUser($query, $limit = false)
     {
-        $req = HTTPRequest::post("https://accounts.interaapps.de/iaauth/api/finduser")
-            ->header("Content-Type: application/x-www-form-urlencoded")
-            ->parameter("key", App::getInstance()->getConfig()->get("auth.ia.key"))
-            ->parameter("query", json_encode($query));
-        return json_decode($req->send()->getData());
+
+        $postdata = [
+            'key' => App::getInstance()->getConfig()->get("auth.ia.key"),
+            "query"=>json_encode($query)
+        ];
+
+        if ($limit !== false)
+            $postdata["limit"] = $limit;
+
+
+        $postdata = http_build_query($postdata);
+    
+        $opts = ['http' =>[
+                'method'  => 'POST',
+                'header'  => 'Content-Type: application/x-www-form-urlencoded',
+                'content' => $postdata
+            ]];
+        $context  = stream_context_create($opts);
+        $result = file_get_contents('https://accounts.interaapps.de/iaauth/api/finduser', false, $context);
+        return json_decode($result);
     }
 
     public static function getUserInformation($user, $t = false)
     {
         if (isset(self::$cachedUsers[$user]))
-            return self::$cachedUsers[$user];
+        return self::$cachedUsers[$user];
 
-        $req = HTTPRequest::post("https://accounts.interaapps.de/iaauth/api/getuserinformation")
-            ->header("Content-Type: application/x-www-form-urlencoded")
-            ->parameter("key", App::getInstance()->getConfig()->get("auth.ia.key"))
-            ->parameter('userkey', $user);
+        $postdata = http_build_query([
+            'key' => App::getInstance()->getConfig()->get("auth.ia.key"),
+            'userkey' => $user
+        ]);
 
-        $result = json_decode($req->send()->getData());;
+        $context = stream_context_create(['http' =>[
+                'method'  => 'POST',
+                'header'  => 'Content-Type: application/x-www-form-urlencoded',
+                'content' => $postdata
+            ]]);
+        $result = json_decode(file_get_contents('https://accounts.interaapps.de/iaauth/api/getuserinformation', false, $context));
 
         if ($result->valid) {
             self::$cachedUsers[$user] = $result;
@@ -56,8 +76,7 @@ class IAAuth
         if ($session == null)
             return false;
 
-        $req = HTTPRequest::post("https://accounts.interaapps.de/iaauth/api/friends/isfriend")
-            ->header("Content-Type: application/x-www-form-urlencoded")
+        $req = HTTPRequest::post("http://localhost:1337/iaauth/api/friends/isfriend")
             ->parameter("key", App::getInstance()->getConfig()->get("auth.ia.key"))
             ->parameter('userkey', $session->user_key)
             ->parameter("name", $username);
