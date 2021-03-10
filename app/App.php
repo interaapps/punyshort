@@ -31,6 +31,7 @@ class App extends WebApplication
     public function init()
     {
         $this->getConfig()
+            ->loadENVFile(".env")
             ->loadJSONFile("env.json");
 
         try {
