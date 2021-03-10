@@ -15,6 +15,7 @@ class IAAuth
     public static function findUser($query, $limit = false)
     {
         $req = HTTPRequest::post("https://accounts.interaapps.de/iaauth/api/finduser")
+            ->header("Content-Type: application/x-www-form-urlencoded")
             ->parameter("key", App::getInstance()->getConfig()->get("auth.ia.key"))
             ->parameter("query", json_encode($query));
         return json_decode($req->send()->getData());
@@ -26,6 +27,7 @@ class IAAuth
             return self::$cachedUsers[$user];
 
         $req = HTTPRequest::post("https://accounts.interaapps.de/iaauth/api/getuserinformation")
+            ->header("Content-Type: application/x-www-form-urlencoded")
             ->parameter("key", App::getInstance()->getConfig()->get("auth.ia.key"))
             ->parameter('userkey', $user);
 
@@ -55,6 +57,7 @@ class IAAuth
             return false;
 
         $req = HTTPRequest::post("https://accounts.interaapps.de/iaauth/api/friends/isfriend")
+            ->header("Content-Type: application/x-www-form-urlencoded")
             ->parameter("key", App::getInstance()->getConfig()->get("auth.ia.key"))
             ->parameter('userkey', $session->user_key)
             ->parameter("name", $username);
