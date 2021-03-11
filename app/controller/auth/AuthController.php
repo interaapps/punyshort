@@ -29,7 +29,7 @@ class AuthController
                 return "";
             }
         }
-        $res->redirect("http://localhost:1337/iaauth/" . App::getInstance()->getConfig()->get("auth.ia.id"));
+        $res->redirect("http://accounts.interaapps.de/iaauth/" . App::getInstance()->getConfig()->get("auth.ia.id"));
     }
 
     public static function getUser(Request $req)
