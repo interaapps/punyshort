@@ -143,7 +143,7 @@ class ApiV2Controller
             $out["created"] = $link->created;
         }
         if ($link != null) {
-            $out["is_mine"] = IAAuth::getUser()->id === $link->userid;
+            $out["is_mine"] = IAAuth::getUser()->id == $link->userid;
             $out["clicks"] = StatsHelper::getClicks($link->id);
             $out["click"] = [
                 date('Y-m-d', date(strtotime("-24 day"))) => StatsHelper::getDayClicks(24, $link->id),
