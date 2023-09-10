@@ -35,15 +35,15 @@ To run a Punyshort instance you need those components:
 You might want to add a custom redirect proxy so the traffic goes through your servers and the SSL-Encryption and Domain managment is on your site. 
 
 #### How do I set it up?
-1. Go to https://www.punyshort.ga
+1. Go to https://punyshort.intera.dev
 2. Log in -> Domains
 3. 'Add Domain' -> Enter Domain Name and select as 'Domain Registration Type'  Custom Proxy
 4. Create a TXT Entry for your domain named 'punyshort-check.{YOUR-DOMAIN}' and the value given in the Dashboard
 5. Start an instance (We recommend you to let it go through a reverse proxy for SSLs)
 ```bash
 docker run -p 80:80 \
-  -e PUNYSHORT_BASE_URL='https://api.punyshort.ga' \
-  -e PUNYSHORT_ERROR_URL='https://punyshort.ga/error-page' \
+  -e PUNYSHORT_BASE_URL='https://api.punyshort.intera.dev' \
+  -e PUNYSHORT_ERROR_URL='https://punyshort.intera.dev/error-page' \
   -e PUNYSHORT_KEY='GIVEN API KEY ON THE DASHBOARD' \
   -e PUNYSHORT_IP_FORWARDING='true' \
   interaapps/punyshort-redirect-proxy
