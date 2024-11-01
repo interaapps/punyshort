@@ -1,0 +1,14 @@
+{
+	email --EXAMPLE_EMAIL--
+
+	on_demand_tls {
+		ask --BASEURL--/v1/domains/domain-exists
+	}
+}
+
+https:// {
+	tls {
+		on_demand
+	}
+	reverse_proxy 10.0.0.4:3007
+}
