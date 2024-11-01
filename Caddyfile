@@ -1,3 +1,5 @@
+# This is an example for a reverse proxy for the redirect proxy to have SSL
+
 {
 	email --EXAMPLE_EMAIL--
 
@@ -10,5 +12,5 @@ https:// {
 	tls {
 		on_demand
 	}
-	reverse_proxy 10.0.0.4:3007
+	reverse_proxy --REDIRECT_PROXY_IP--
 }
